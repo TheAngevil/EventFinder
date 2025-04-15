@@ -4,3 +4,5 @@ flask-login
 python-dotenv
 requests
 gunicorn
+supabase
+postgrest-py
