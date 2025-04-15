@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>My Created Events</h2>
+
+{% if events %}
+    <ul>
+    {% for event in events %}
+        <li>
+            <a href="{{ url_for('main.event_detail', id=event.id) }}">{{ event.title }}</a> <br>
+            <small>{{ event.date }}</small>
+        </li>
+        <a href="{{ url_for('main.edit_event', id=event.id) }}">Edit</a> |
+        <form method="POST" action="{{ url_for('main.delete_event', id=event.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" onclick="return confirm('Delete this event?')">Delete</button>
+        </form>
+        <a href="{{ url_for('main.view_attendees', id=event.id) }}">View Attendees</a>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven’t created any events yet.</p>
+{% endif %}
+
+
+<a href="{{ url_for('main.create_event') }}">+ Create New Event</a>
+{% endblock %}

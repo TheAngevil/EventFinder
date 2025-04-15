@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ event.title }}</h2>
+<p><strong>Date:</strong> {{ event.date }}</p>
+<p>{{ event.description }}</p>
+
+{% if current_user.is_authenticated %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.submit() }}
+    </form>
+{% else %}
+    <p><a href="{{ url_for('main.login') }}">Log in</a> for more actions.</p>
+{% endif %}
+{% endblock %}
