@@ -1,0 +1,194 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-04-17 19:50+0800\n"
+"PO-Revision-Date: 2025-04-17 15:32+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.11.0\n"
+
+#: app/templates/attendees.html:9
+#, fuzzy
+msgid "attendees_email"
+msgstr "view attendees"
+
+#: app/templates/attendees.html:10
+msgid "attendees_registered_at"
+msgstr "報名時間"
+
+#: app/templates/attendees.html:11
+msgid "attendees_Checked In"
+msgstr "是否確認出席"
+
+#: app/templates/attendees.html:28
+msgid "Save Check-in Status"
+msgstr "Save Check-in Status"
+
+#: app/templates/attendees.html:31
+msgid "back_to_last_page"
+msgstr "回上一頁"
+
+#: app/templates/edit_event.html:3
+msgid "edit_event_edit_event"
+msgstr "Editing Event"
+
+#: app/templates/edit_event.html:13
+msgid "back to my events"
+msgstr "back to my event"
+
+#: app/templates/event_detail.html:13
+#, fuzzy
+msgid "Log in"
+msgstr "Log in"
+
+#: app/templates/event_detail.html:13
+msgid "for more actions"
+msgstr "for more actions"
+
+#: app/templates/events.html:3
+msgid "upcoming events"
+msgstr "upcoming events"
+
+#: app/templates/events.html:13
+msgid "view details"
+msgstr "view details"
+
+#: app/templates/events.html:17
+msgid "Edit"
+msgstr "Edit"
+
+#: app/templates/events.html:20
+msgid "Delete"
+msgstr "Delete"
+
+#: app/templates/events.html:28
+msgid "event_not_found"
+msgstr "Event not found"
+
+#: app/templates/events.html:32
+#, fuzzy
+msgid "Create New Event"
+msgstr "Create New Event"
+
+#: app/templates/layout.html:5
+msgid "Activity MVP"
+msgstr "Gather MVP"
+
+#: app/templates/layout.html:13
+msgid "Let's Gather!"
+msgstr "Let's Gather!"
+
+#: app/templates/layout.html:14
+msgid "Find and manage the events you love."
+msgstr "Find and manage the events you love."
+
+#: app/templates/layout.html:19
+msgid "Hello,"
+msgstr "Hello,"
+
+#: app/templates/layout.html:21
+msgid "Hello, Guest"
+msgstr "Hello, Guest"
+
+#: app/templates/layout.html:24
+msgid "Home"
+msgstr "Home"
+
+#: app/templates/layout.html:25
+msgid "Events"
+msgstr "Events"
+
+#: app/templates/layout.html:28
+msgid "My Registration Events"
+msgstr "My Registration Events"
+
+#: app/templates/layout.html:29
+msgid "Create Event"
+msgstr "Create Event"
+
+#: app/templates/layout.html:30
+msgid "My Events"
+msgstr "My Events"
+
+#: app/templates/layout.html:31
+msgid "Logout"
+msgstr "Logout"
+
+#: app/templates/layout.html:33
+msgid "Login"
+msgstr "Login"
+
+#: app/templates/layout.html:34
+msgid "Register"
+msgstr "Register"
+
+#: app/templates/layout.html:40
+msgid "繁體中文"
+msgstr "Traditional Chinese"
+
+#: app/templates/layout.html:41
+msgid "English"
+msgstr "English"
+
+#: app/templates/login.html:3
+#, fuzzy
+msgid "login"
+msgstr "Login"
+
+#: app/templates/my_events.html:3
+#, fuzzy
+msgid "my created event"
+msgstr "My created event"
+
+#: app/templates/my_events.html:12
+msgid "edit"
+msgstr "Edit"
+
+#: app/templates/my_events.html:15
+msgid "delete"
+msgstr "delete"
+
+#: app/templates/my_events.html:17
+msgid "view attendees"
+msgstr "view attendees"
+
+#: app/templates/my_events.html:21
+msgid "you have not created event yet"
+msgstr "You have not created event yet"
+
+#: app/templates/my_events.html:25
+#, fuzzy
+msgid "create new event"
+msgstr "Create Event"
+
+#: app/templates/my_registrations.html:3
+#, fuzzy
+msgid "my registered events"
+msgstr "Registered At"
+
+#: app/templates/my_registrations.html:15
+#, fuzzy
+msgid "no registered events"
+msgstr "Registered At"
+
+#: app/templates/new_event.html:3
+#, fuzzy
+msgid "create event"
+msgstr "Create Event"
+
+#: app/templates/register.html:3
+#, fuzzy
+msgid "register"
+msgstr "Register"
+
