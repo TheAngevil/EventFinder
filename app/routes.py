@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, RegisterForm, EventForm
 from .models import User  # 後續會補上
@@ -281,3 +281,16 @@ def update_checkin(event_id):
 
     flash("Check-in status updated.")
     return redirect(url_for("main.view_attendees", id=event_id))
+
+@main.route('/set-lang')
+def set_language():
+    lang_code = request.args.get('lang_code', 'zh_Hant_TW')
+    if lang_code in ['en', 'zh_Hant_TW']:
+        session['lang'] = lang_code
+        session.permanent = True
+        print("✔ 已將語言寫入 session =", session['lang'])
+    else:
+        print("⚠️ 不合法的語言設定")
+    return redirect(request.referrer or url_for('main.index'))
+
+

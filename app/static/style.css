@@ -1,2 +1,117 @@
-body { font-family: sans-serif; margin: 2rem; }
-nav a { margin-right: 10px; }
+body{
+  margin:0;
+  font-family:'Nunito',sans-serif;
+  background:#EEF7FF;              /* 淺背景 */
+  color:#4D869C;                   /* 深文字 */
+}
+
+/* Header */
+header{
+  background:#7AB2B2;              /* 主品牌色 */
+  color:#fff;
+  padding:1rem 2rem;
+  text-align:center;
+}
+
+/* Navbar */
+nav{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:1rem;
+  background:#EEF7FF;              /* 淺背景 */
+  padding:.5rem .8rem;
+}
+nav a{
+  color:#4D869C;
+  text-decoration:none;
+  font-weight:bold;
+  padding:.4rem .8rem;
+  border-radius:6px;
+}
+nav a:hover{background:#CDE8E5;}   /* 卡片底色 */
+
+/* Container */
+.container{
+  max-width:900px;
+  margin:2rem auto;
+  padding:1.5rem;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+h1,h2{color:#4D869C;}
+
+/* Flash */
+.flashes{
+  list-style:none;
+  padding:.5rem;
+  margin-bottom:1rem;
+  background:#CDE8E5;
+  border-left:5px solid #7AB2B2;
+  border-radius:6px;
+}
+
+/* Button */
+button,input[type="submit"]{
+  background:#7AB2B2;
+  color:#fff;
+  border:none;
+  padding:.5rem 1rem;
+  font-size:1rem;
+  border-radius:6px;
+  cursor:pointer;
+}
+button:hover,input[type="submit"]:hover{
+  background:#4D869C;
+}
+
+/* Event grid & card */
+.event-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;
+  margin-top:1.5rem;
+}
+.event-card{
+  background:#CDE8E5;
+  border:1px solid #7AB2B2;
+  border-radius:12px;
+  padding:1.2rem;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+  transition:transform .2s,box-shadow .2s;
+}
+.event-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+.event-card h3{margin-top:0;color:#4D869C;}
+.event-card .date{font-size:.9rem;color:#4D869C;margin-bottom:.6rem;}
+.event-card .btn{
+  display:inline-block;
+  margin-top:.8rem;
+  background:#7AB2B2;
+  color:#fff;
+  text-decoration:none;
+  padding:.5rem 1rem;
+  border-radius:6px;
+  font-weight:bold;
+}
+.event-card .btn:hover{background:#4D869C;}
+
+/* Card controls */
+.card-controls{margin-top:1rem;font-size:.9rem;}
+.card-controls a{
+  color:#4D869C;
+  font-weight:bold;
+  text-decoration:none;
+}
+.card-controls button{
+  background:none;
+  color:#4D869C;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+}
+.card-controls button:hover{text-decoration:underline;}

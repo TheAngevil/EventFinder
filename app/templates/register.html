@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Register</h2>
+<h2>{{ _('register') }}</h2>
 <form method="POST">
     {{ form.hidden_tag() }}
     {{ form.email.label }} {{ form.email() }}<br>

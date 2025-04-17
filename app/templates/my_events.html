@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>My Created Events</h2>
+<h2>{{ _('my created event') }}</h2>
 
 {% if events %}
     <ul>
@@ -9,18 +9,18 @@
             <a href="{{ url_for('main.event_detail', id=event.id) }}">{{ event.title }}</a> <br>
             <small>{{ event.date }}</small>
         </li>
-        <a href="{{ url_for('main.edit_event', id=event.id) }}">Edit</a> |
+        <a href="{{ url_for('main.edit_event', id=event.id) }}">{{ _('edit') }}</a> |
         <form method="POST" action="{{ url_for('main.delete_event', id=event.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" onclick="return confirm('Delete this event?')">Delete</button>
+            <button type="submit" onclick="return confirm('Delete this event?')">{{ _('delete') }}</button>
         </form>
-        <a href="{{ url_for('main.view_attendees', id=event.id) }}">View Attendees</a>
+        <a href="{{ url_for('main.view_attendees', id=event.id) }}">{{ _('view attendees') }}</a>
     {% endfor %}
     </ul>
 {% else %}
-    <p>You haven’t created any events yet.</p>
+    <p>{{ _('you have not created event yet') }}</p>
 {% endif %}
 
 
-<a href="{{ url_for('main.create_event') }}">+ Create New Event</a>
+<a href="{{ url_for('main.create_event') }}">{{ _('create new event') }}</a>
 {% endblock %}

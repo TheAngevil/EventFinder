@@ -2,187 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Activity MVP</title>
+    <title>{{ _('Activity MVP') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Nunito', sans-serif;
-            background: #FFF8F0;
-            color: #333;
-        }
-        header {
-            background: #FF9F1C;
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            background: #FFE4C4;
-            padding: 0.5rem 0.8rem;
-        }
-        nav a {
-            color: #D1495B;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-        }
-        nav a:hover {
-            background-color: #FFDAB9;
-        }
-        nav p {
-            margin: 0;
-            font-weight: bold;
-            color: #D1495B;
-        }
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #FF9F1C;
-        }
-        .flashes {
-            list-style: none;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            background: #FFEBC9;
-            border-left: 5px solid #FF9F1C;
-            border-radius: 6px;
-        }
-        .flashes li {
-            margin: 0.3rem 0;
-        }
-        button, input[type="submit"] {
-            background: #FF9F1C;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover, input[type="submit"]:hover {
-            background: #FFB347;
-        }
-        .event-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.5rem;
-          margin-top: 1.5rem;
-        }
-
-        .event-card {
-          background-color: #FFF4E6;
-          border: 1px solid #FFDAB9;
-          border-radius: 12px;
-          padding: 1.2rem;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .event-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .event-card h3 {
-          margin-top: 0;
-          color: #D1495B;
-        }
-
-        .event-card .date {
-          font-size: 0.9rem;
-          color: #666;
-          margin-bottom: 0.6rem;
-        }
-
-        .event-card .btn {
-          display: inline-block;
-          margin-top: 0.8rem;
-          background-color: #FF9F1C;
-          color: white;
-          text-decoration: none;
-          padding: 0.5rem 1rem;
-          border-radius: 6px;
-          font-weight: bold;
-        }
-
-        .event-card .btn:hover {
-          background-color: #FFB347;
-        }
-
-        .card-controls {
-          margin-top: 1rem;
-          font-size: 0.9rem;
-        }
-
-        .card-controls a {
-          color: #5C3D2E;
-          font-weight: bold;
-          text-decoration: none;
-        }
-
-        .card-controls button {
-          background: none;
-          color: #D1495B;
-          border: none;
-          cursor: pointer;
-          font-weight: bold;
-        }
-
-        .card-controls button:hover {
-          text-decoration: underline;
-        }
-
-    </style>
+    <!-- 引用外部 CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
-        <h1>🌞 Let's Gather!</h1>
-        <p>Find and manage the events you love.</p>
+        <h1>{{ _("Let's Gather!") }}</h1>
+        <p>{{ _('Find and manage the events you love.') }}</p>
     </header>
 
     <nav>
         {% if current_user.is_authenticated %}
-            <a>Hello, {{ current_user.email }}</a>
+            <a>{{ _('Hello,') }} {{ current_user.email }}</a>
         {% else %}
-            <a>Hello, Guest</a>
+            <a>{{ _('Hello, Guest') }}</a>
         {% endif %}
 
-        <a href="{{ url_for('main.index') }}">Home</a>
-        <a href="{{ url_for('main.event_list') }}">Events</a>
+        <a href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
+        <a href="{{ url_for('main.event_list') }}">{{ _('Events') }}</a>
 
         {% if current_user.is_authenticated %}
-            <a href="{{ url_for('main.my_registrations') }}">My Registration Events</a>
-            <a href="{{ url_for('main.create_event') }}">Create Event</a>
-            <a href="{{ url_for('main.my_events') }}">My Events</a>
-            <a href="{{ url_for('main.logout') }}">Logout</a>
+            <a href="{{ url_for('main.my_registrations') }}">{{ _('My Registration Events') }}</a>
+            <a href="{{ url_for('main.create_event') }}">{{ _('Create Event') }}</a>
+            <a href="{{ url_for('main.my_events') }}">{{ _('My Events') }}</a>
+            <a href="{{ url_for('main.logout') }}">{{ _('Logout') }}</a>
         {% else %}
-            <a href="{{ url_for('main.login') }}">Login</a>
-            <a href="{{ url_for('main.register') }}">Register</a>
+            <a href="{{ url_for('main.login') }}">{{ _('Login') }}</a>
+            <a href="{{ url_for('main.register') }}">{{ _('Register') }}</a>
         {% endif %}
+
+        <form method="GET" action="{{ url_for('main.set_language') }}">
+            <label for="lang-select">🌐</label>
+            <select name="lang_code" id="lang-select" onchange="this.form.submit()" style="padding:0.3rem">
+                <option value="zh_Hant_TW" {% if get_locale() == 'zh_Hant_TW' %}selected{% endif %}>{{ _('繁體中文') }}</option>
+                <option value="en" {% if get_locale() == 'en' %}selected{% endif %}>{{ _('English') }}</option>
+            </select>
+        </form>
     </nav>
 
     <div class="container">
         {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="flashes">
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}

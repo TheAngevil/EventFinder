@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Edit Event: {{ event.title }}</h2>
+<h2>{{ _('edit_event_edit_event') }}: {{ event.title }}</h2>
 
 <form method="POST">
     {{ form.hidden_tag() }}
@@ -10,5 +10,5 @@
     {{ form.submit(value="Update Event") }}
 </form>
 
-<a href="{{ url_for('main.my_events') }}">← Back to My Events</a>
+<a href="{{ url_for('main.my_events') }}">{{ _('back to my events') }}/a>
 {% endblock %}

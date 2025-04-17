@@ -6,9 +6,9 @@
     <table border="1" cellpadding="6">
         <thead>
             <tr>
-                <th>Email</th>
-                <th>Registered At</th>
-                <th>Checked In</th>
+                <th>{{ _('attendees_email') }}</th>
+                <th>{{ _('attendees_registered_at') }}</th>
+                <th>{{ _('attendees_Checked In') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -25,8 +25,8 @@
         </tbody>
     </table>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button type="submit">Save Check-in Status</button>
+    <button type="submit">{{ _('Save Check-in Status') }}</button>
 </form>
 
-<a href="{{ url_for('main.my_events') }}">← Back</a>
+<a href="{{ url_for('main.my_events') }}">{{ _('back_to_last_page') }}</a>
 {% endblock %}

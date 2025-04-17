@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>My Registered Events</h2>
+<h2>{{ _('my registered events') }}</h2>
 
 {% if events %}
     <ul>
@@ -12,7 +12,7 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p>You haven’t registered for any events yet.</p>
+    <p>{{ _('no registered events') }}</p>
 {% endif %}
 
 {% endblock %}
