@@ -1,5 +1,5 @@
 from flask_login import UserMixin, LoginManager
-from flask import current_app
+from flask import current_app, logging
 from postgrest import APIError
 from supabase import create_client
 supabase = None
@@ -33,10 +33,15 @@ class User(UserMixin):
     @login_manager.user_loader
     def get_by_id(user_id):
         init_supabase()
-        result = supabase.table('users').select("*").eq("id", user_id).single().execute()
-        if result.data:
-            return User(id=result.data['id'], email=result.data['email'], role=result.data['role'], password_hash=result.data['password_hash'])
-        return None
+        try:
+            result = (supabase.table('users').select("*").eq("id", user_id).single().execute())
+            if result.data:
+                return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
+                            password_hash=result.data['password_hash'])
+        except BaseException as err:
+            print(err)
+        finally:
+            return None
 
     @staticmethod
     def create(email, password, role="participant"):
@@ -54,16 +59,3 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     return User.get_by_id(user_id)
-
-# if __name__ == "__main__":
-#     init_supabase()
-#     from werkzeug.security import generate_password_hash
-#     try:
-#         supabase.table("users").insert({
-#             "email": "test@gmail.com",
-#             "password_hash": generate_password_hash("123456"),
-#             "role": "participant"
-#         }).execute()
-#         print("success")
-#     except BaseException as err:
-#         print(err)
