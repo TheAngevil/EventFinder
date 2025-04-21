@@ -2,7 +2,7 @@
 {% block content %}
   <h2>{{ _('Attendees for "%(title)s"', title=event.title) }}</h2>
 
-  <form method="POST" action="{{ url_for('main.update_checkin', event_id=event.id) }}">
+  <br method="POST" action="{{ url_for('main.update_checkin', event_id=event.id) }}">
     <table border="1" cellpadding="6">
       <thead>
         <tr>
@@ -27,8 +27,7 @@
         {% endfor %}
       </tbody>
     </table>
-
-    {{ form.hidden_tag() }}
+    <br>
     <button type="submit">{{ _('Save Check-in Status') }}</button>
   </form>
 
