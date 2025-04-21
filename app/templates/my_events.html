@@ -2,36 +2,55 @@
 {% block content %}
   <h2>{{ _('My Created Events') }}</h2>
 
-  {% if events %}
-    <ul>
-      {% for event in events %}
-        <li>
-          <a href="{{ url_for('main.event_detail', id=event.id) }}">
-            {{ event.title }}
-          </a><br>
-          <small>{{ event.date }}</small><br>
-          <a href="{{ url_for('main.edit_event', id=event.id) }}">
-            {{ _('Edit') }}
-          </a>
-          <form method="POST" action="{{ url_for('main.delete_event', id=event.id) }}" style="display:inline;">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" onclick="return confirm('{{ _('Delete this event?') }}')">
-              {{ _('Delete') }}
-            </button>
-          </form>
-          <a href="{{ url_for('main.view_attendees', id=event.id) }}">
-            {{ _('View Attendees') }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>{{ _('You have not created any events yet.') }}</p>
-  {% endif %}
+  {# 搜尋表單 #}
+  <form method="get" class="search-form" style="margin-bottom:1rem;">
+    <input type="text"
+           name="q"
+           placeholder="{{ _('Search my events...') }}"
+           value="{{ q }}"
+           style="padding:.4rem; border-radius:6px; border:1px solid #ccc; width:200px;">
+    <button type="submit" class="btn">{{ _('Search') }}</button>
+  </form>
 
+{% if current_user.is_authenticated %}
   <p>
     <a class="btn" href="{{ url_for('main.create_event') }}">
       {{ _('Create New Event') }}
     </a>
   </p>
+{% endif %}
+
+  {% if events %}
+    <div class="event-grid">
+      {% for event in events %}
+        <div class="event-card">
+          <h3>{{ event.title }}</h3>
+          <p class="date">📅 {{ event.date[:10] }} {{ event.date[11:16] }}</p>
+
+          <div class="card-controls" style="margin-top:0.8rem;">
+            <a class="btn btn-sm"
+               href="{{ url_for('main.edit_event', id=event.id) }}">
+              {{ _('Edit') }}
+            </a>
+            <form method="POST"
+                  action="{{ url_for('main.delete_event', id=event.id) }}"
+                  style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit"
+                      class="btn btn-sm"
+                      onclick="return confirm('{{ _('Delete this event?') }}')">
+                {{ _('Delete') }}
+              </button>
+            </form>
+            <a class="btn btn-sm"
+               href="{{ url_for('main.view_attendees', id=event.id) }}">
+              {{ _('View Attendees') }}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>{{ _('You have not created any events yet.') }}</p>
+  {% endif %}
 {% endblock %}

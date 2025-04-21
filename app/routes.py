@@ -191,20 +191,30 @@ def my_registrations():
 @main.route('/my-events')
 @login_required
 def my_events():
-    # if current_user.role != 'organizer':
-    #     flash("You are not authorized to view this page.")
-    #     return redirect(url_for('main.index'))
+    q = request.args.get('q', '').strip()
     init_supabase()
-    try:
-        result = supabase.table("events") \
-            .select("*") \
-            .eq("created_by", current_user.id) \
-            .order("date", desc=False) \
-            .execute()
-        return render_template("my_events.html", events=result.data)
-    except BaseException as err:
-        print(err)
-        return render_template("my_events.html", events=[])
+
+    # 1) 撈出目前使用者建立的活動，並可用關鍵字過濾 title
+    query = (supabase.table("events")
+        .select("*")
+        .eq("created_by", current_user.id))
+
+    if q:
+        # Supabase-py 目前不直接支援 ilike，使用 rpc 或 filter API
+        query = query.ilike("title", f"%{q}%")
+
+
+    # 2) 依日期升冪排序
+    query = query.order("date", desc=False)
+
+    events = query.execute().data or []
+
+    return render_template(
+        "my_events.html",
+        events=events,
+        q=q
+    )
+
 
 @main.route('/events/<id>/edit', methods=['GET', 'POST'])
 @login_required

@@ -31,7 +31,7 @@
             <a>{{ _('Hello, Guest') }}</a>
         {% endif %}
 
-        <a href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
+{#        <a href="{{ url_for('main.index') }}">{{ _('Home') }}</a>#}
         <a href="{{ url_for('main.event_list') }}">{{ _('Events') }}</a>
 
         {% if current_user.is_authenticated %}
