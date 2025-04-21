@@ -7,7 +7,7 @@
   <form id="searchForm" class="search-form">
     <input type="text" name="q"
            placeholder="{{ _('Search by keyword...') }}"
-           value="{{ q }}" />
+           value="{{ q or '' }}" />
     <button type="submit">{{ _('Search') }}</button>
   </form>
 
@@ -21,8 +21,7 @@
 
   <br>
   {% if current_user.is_authenticated %}
-    <a class="btn"
-       href="{{ url_for('main.create_event') }}">
+    <a class="btn" href="{{ url_for('main.create_event') }}">
       {{ _('Create New Event') }}
     </a>
   {% endif %}
@@ -30,50 +29,52 @@
   {# —— Infinite Scroll Script —— #}
   <script>
   (function(){
-    const grid       = document.getElementById('eventGrid');
-    const loader     = document.getElementById('loading');
-    const form       = document.getElementById('searchForm');
-    let offset       = 0;
-    // 桌面 9 筆，手機 5 筆
-    const isMobile   = window.matchMedia("only screen and (max-width: 768px)").matches;
-    const limit      = isMobile ? 5 : 9;
-    let loading      = false;
-    let allLoaded    = false;
+    const grid     = document.getElementById('eventGrid');
+    const loader   = document.getElementById('loading');
+    const form     = document.getElementById('searchForm');
+    let offset     = 0;
+    const isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
+    const limit    = isMobile ? 5 : 9;
+    let loading    = false;
+    let done       = false;
 
-    // 建立單張卡片的 HTML
     function buildCard(e){
-      const tagsHtml = (e.tags||[]).map(t=>
-        `<span class="tag">#${t.name}</span>`
-      ).join(' ');
+      const tags = (e.tags||[]).map(t=>`<span class="tag">#${t.name}</span>`).join(' ');
       return `
       <div class="event-card">
         <h3>${e.title}</h3>
         <p class="date">📅 ${e.date.slice(0,10)} ${e.date.slice(11,16)}</p>
         <p>${e.description.slice(0,100)}…</p>
-        <div class="tags">${tagsHtml}</div>
-        <a class="btn" href="${ location.origin + '/events/' + e.id }">
-          {{ _('View Details') }}
-        </a>
+        <div class="tags">${tags}</div>
+        <a class="btn" href="/events/${e.id}">{{ _('View Details') }}</a>
       </div>`;
     }
 
-    // 取得活動並渲染
     async function fetchEvents(reset=false){
-      if(loading||allLoaded) return;
-      loading = true;
-      loader.style.display = 'block';
-      if(reset){
+        console.log('[fetchEvents called]', { reset, offset, limit, loading, done });
+
+        if(reset){
         offset = 0;
-        allLoaded = false;
+        done   = false;
         grid.innerHTML = '';
       }
+
+      if(loading||done) return;
+      loading = true;
+      loader.style.display = 'block';
+
       const params = new URLSearchParams(new FormData(form));
-      params.set('limit', limit);
+      params.set('limit',  limit);
       params.set('offset', offset);
-      const res = await fetch('/api/events?'+params);
+
+        console.log('[calling api]', '/api/events?' + params);
+      const res  = await fetch('/api/events?' + params);
+        console.log('[api status]', res.status);
       const data = await res.json();
-      if(data.length < limit) allLoaded = true;
-      data.forEach(e=> grid.insertAdjacentHTML('beforeend', buildCard(e)));
+        console.log('[api data length]', data.length, data);
+      if(data.length < limit) done = true;
+
+      data.forEach(e => grid.insertAdjacentHTML('beforeend', buildCard(e)));
       offset += data.length;
       loading = false;
       loader.style.display = 'none';
@@ -82,14 +83,14 @@
     // 初次載入
     fetchEvents();
 
-    // 搜尋時重置並重新載入
-    form.addEventListener('submit', e=>{
+    // 搜尋時重置並重拉
+    form.addEventListener('submit', e => {
       e.preventDefault();
       fetchEvents(true);
     });
 
     // 滾動到底部自動載更多
-    window.addEventListener('scroll', ()=>{
+    window.addEventListener('scroll', () => {
       if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 300){
         fetchEvents();
       }
