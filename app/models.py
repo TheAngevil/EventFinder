@@ -1,3 +1,6 @@
+from pickle import FALSE
+from xmlrpc.client import Fault
+
 from flask_login import UserMixin, LoginManager
 from flask import current_app, logging
 from postgrest import APIError
@@ -22,12 +25,13 @@ class User(UserMixin):
         init_supabase()
         try:
             result = supabase.table('users').select("*").eq("email", email).single().execute()
+            print(f"debug get_by_email result.data:  {result.data}")
+            if result.data:
+                return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
+                            password_hash=result.data['password_hash'])
         except APIError as api_err:
-            print(api_err)
+            print("get_by_email_error:" + api_err.message)
             return None
-        if result.data:
-            return User(id=result.data['id'], email=result.data['email'], role=result.data['role'], password_hash=result.data['password_hash'])
-        return None
 
     @staticmethod
     @login_manager.user_loader
@@ -38,9 +42,8 @@ class User(UserMixin):
             if result.data:
                 return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
                             password_hash=result.data['password_hash'])
-        except BaseException as err:
-            print(err)
-        finally:
+        except APIError as err:
+            print("get_by_id_error" + err.message)
             return None
 
     @staticmethod

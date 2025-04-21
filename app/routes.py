@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_babel import _
+from postgrest import APIError
+
 from .forms import LoginForm, RegisterForm, EventForm
 from .models import User # 後續會補上
 from werkzeug.security import check_password_hash
@@ -25,8 +27,10 @@ def index():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    print(f"debug validate on submit: + {form.validate_on_submit()}")
     if form.validate_on_submit():
         user = User.get_by_email(form.email.data)  # 後續補上
+        print("debug login get_by_email" + f"{user}")
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
             return redirect(url_for('main.index'))
@@ -75,6 +79,10 @@ def create_event():
     form = EventForm()
     form.tags.choices = []
 
+    # 驗證失敗時印出錯誤，並重新顯示表單
+    if form.errors:
+        print("create_event Form validation errors:", form.errors)
+
     if form.validate_on_submit():
         # 2) 插入新活動
         ev = supabase.table("events").insert({
@@ -120,9 +128,6 @@ def create_event():
 
         flash(_("Event created successfully"), "success")
         return redirect(url_for('main.event_detail', id=ev["id"]))
-
-    # 驗證失敗時印出錯誤，並重新顯示表單
-    print("Form validation errors:", form.errors)
     return render_template("new_event.html", form=form)
 
 
@@ -152,45 +157,11 @@ def event_detail(id):
 
 @main.route('/events')
 def event_list():
-    q            = request.args.get('q', '').strip()
-    raw_ids = request.args.getlist('tags')  # might contain ""
-    # remove empty strings
-    selected = [tid for tid in raw_ids if tid]
-    # 例如 ['uuid1','uuid2']
-    locale       = get_locale()
-    init_supabase()
-
-    # 呼叫已經定義好的 search_events RPC
-    events = (
-        supabase
-          .rpc("search_events", {
-              "keywords": q,
-              "locale": locale,
-              "tag_ids": selected
-          })
-          .execute()
-          .data
-        or []
-    )
-
-    # 同步全域標籤清單（供下拉多選 filter）
-    tag_rows = (
-        supabase
-          .table("tags")
-          .select("id, tag_translations(name)")
-          .eq("tag_translations.locale", locale)
-          .execute()
-          .data
-        or []
-    )
-    all_tags = [(t["id"], t["tag_translations"][0]["name"]) for t in tag_rows]
-
-    return render_template(
-        "events.html",
-        events=events,
-        all_tags=all_tags,
-        q=q,
-        selected_tags=selected
+    # 前端會先自動呼叫 /api/events
+    # 這裡只設定初始參數貼到 template
+    return render_template("events.html",
+        initial_limit = 9,
+        mobile_limit  = 5
     )
 
 
@@ -391,3 +362,30 @@ def tag_search():
     }).execute().data or []
     # 回傳 JSON：[{id:..., name:...}, ...]
     return jsonify(rows)
+
+@main.route('/api/events')
+def api_events():
+    q        = request.args.get('q','').strip()
+    tags     = [tid for tid in request.args.getlist('tags') if tid]
+    locale   = get_locale()
+    # 前端傳 limit, offset
+    try:
+        p_limit  = int(request.args.get('limit', 9))
+        p_offset = int(request.args.get('offset', 0))
+    except ValueError:
+        p_limit, p_offset = 9, 0
+
+    init_supabase()
+    events = []
+    try:
+        events = supabase.rpc("search_events", {
+            "keywords": q,
+            "locale":   locale,
+            "tag_ids":  tags,
+            "p_limit":  p_limit,
+            "p_offset": p_offset
+        }).execute().data or []
+    except APIError as api_err:
+        print("api_events_error" + api_err.message)
+    finally:
+        return jsonify(events)
