@@ -1,11 +1,14 @@
-from datetime import datetime
-
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_babel import _
 from .forms import LoginForm, RegisterForm, EventForm
-from .models import User  # 後續會補上
+from .models import User # 後續會補上
 from werkzeug.security import check_password_hash
 from supabase import create_client
+import re
+from . import get_locale
+
+
 supabase = None
 
 def init_supabase():
@@ -55,56 +58,141 @@ def register():
 @login_required
 def create_event():
     from .forms import EventForm
+
+    locale = get_locale()
+    init_supabase()
+
+    # 1) 載入所有已存在的 tags 作為 choices
+    tag_rows = (
+        supabase
+          .table("tags")
+          .select("id, tag_translations(name)")
+          .eq("tag_translations.locale", locale)
+          .execute()
+          .data
+        or []
+    )
     form = EventForm()
+    form.tags.choices = []
+
     if form.validate_on_submit():
-        from .models import init_supabase
-        init_supabase()
-        supabase.table("events").insert({
-            "title": form.title.data,
+        # 2) 插入新活動
+        ev = supabase.table("events").insert({
+            "title":       form.title.data,
             "description": form.description.data,
-            "date": form.date.data.isoformat(),
-            "created_by": current_user.id
-        }).execute()
-        flash("Event created successfully!")
-        return redirect(url_for('main.index'))
+            "date":        form.date.data.isoformat(),
+            "created_by":  current_user.id
+        }).execute().data[0]
+
+        # 3) 處理 tags：區分已存在 UUID 與新輸入文字
+        raw_tags = form.tags.data  # 可能包含 UUID 或新文字
+        final_ids = []
+        uuid_pattern = re.compile(
+            r'^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-' +
+            r'[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-' +
+            r'[0-9a-fA-F]{12}$'
+        )
+        for tag in raw_tags:
+            if uuid_pattern.match(tag):
+                # 已存在的 tag UUID
+                final_ids.append(tag)
+            else:
+                # 新標籤：以輸入文字當 slug，並新增翻譯
+                new_tag = supabase.table("tags") \
+                    .insert({"slug": tag}) \
+                    .execute().data[0]
+                tid = new_tag["id"]
+                # 建立中英文翻譯
+                supabase.table("tag_translations").insert([
+                    {"tag_id": tid, "locale": "en",         "name": tag},
+                    {"tag_id": tid, "locale": "zh_Hant_TW", "name": tag}
+                ]).execute()
+                final_ids.append(tid)
+
+        # 4) 建立 event_tags 關聯
+        rows = [
+            {"event_id": ev["id"], "tag_id": tid}
+            for tid in final_ids
+            if tid
+        ]
+        if rows:
+            supabase.table("event_tags").insert(rows).execute()
+
+        flash(_("Event created successfully"), "success")
+        return redirect(url_for('main.event_detail', id=ev["id"]))
+
+    # 驗證失敗時印出錯誤，並重新顯示表單
+    print("Form validation errors:", form.errors)
     return render_template("new_event.html", form=form)
 
-@main.route('/events/<id>', methods=['GET', 'POST'])
+
+@main.route('/events/<id>')
 def event_detail(id):
-    from .forms import RegisterEventForm
     init_supabase()
-    form = RegisterEventForm()
+    locale = get_locale()
 
-    try:
-        event = supabase.table("events").select("*").eq("id", id).single().execute().data
-    except BaseException as err:
-        flash("Event not found.")
-        return redirect(url_for("main.index"))
+    ev = supabase.table("events").select("*").eq("id", id).single().execute().data
+    # 讀這個活動的標籤翻譯
+    tag_rows = (
+        supabase
+          .table("event_tags")
+          .select("tag_id, tags!inner(tag_translations(name))")
+          .eq("event_id", id)
+          .eq("tags.tag_translations.locale", locale)
+          .execute()
+          .data or []
+    )
+    # 轉成 list of {"id":..., "name":...}
+    ev["tags"] = [
+       {"id": r["tag_id"], "name": r["tags"]["tag_translations"][0]["name"]}
+       for r in tag_rows
+    ]
 
-    if form.validate_on_submit():
-        if not current_user.is_authenticated:
-            flash("You must be logged in to register.")
-            return redirect(url_for('main.login'))
-
-        supabase.table("registrations").insert({
-            "user_id": current_user.id,
-            "event_id": id
-        }).execute()
-        flash("You are registered!")
-        return redirect(url_for("main.index"))
-
-    return render_template("event_detail.html", event=event, form=form)
+    return render_template("event_detail.html", event=ev)
 
 @main.route('/events')
 def event_list():
-    try:
-        init_supabase()
-        result = supabase.table("events").select("*").order("date", desc=False).execute()
-        events = result.data or []
-        return render_template("events.html", events=events)
-    except BaseException as attribute_err:
-        print(attribute_err)
-        return render_template("events.html", events=None)
+    q            = request.args.get('q', '').strip()
+    raw_ids = request.args.getlist('tags')  # might contain ""
+    # remove empty strings
+    selected = [tid for tid in raw_ids if tid]
+    # 例如 ['uuid1','uuid2']
+    locale       = get_locale()
+    init_supabase()
+
+    # 呼叫已經定義好的 search_events RPC
+    events = (
+        supabase
+          .rpc("search_events", {
+              "keywords": q,
+              "locale": locale,
+              "tag_ids": selected
+          })
+          .execute()
+          .data
+        or []
+    )
+
+    # 同步全域標籤清單（供下拉多選 filter）
+    tag_rows = (
+        supabase
+          .table("tags")
+          .select("id, tag_translations(name)")
+          .eq("tag_translations.locale", locale)
+          .execute()
+          .data
+        or []
+    )
+    all_tags = [(t["id"], t["tag_translations"][0]["name"]) for t in tag_rows]
+
+    return render_template(
+        "events.html",
+        events=events,
+        all_tags=all_tags,
+        q=q,
+        selected_tags=selected
+    )
+
 
 @main.route('/my-registrations')
 @login_required
@@ -193,7 +281,6 @@ def edit_event(id):
 @main.route('/events/<id>/delete', methods=['POST'])
 @login_required
 def delete_event(id):
-    from .models import init_supabase
     init_supabase()
 
     # 取得活動資料
@@ -294,3 +381,13 @@ def set_language():
     return redirect(request.referrer or url_for('main.index'))
 
 
+@main.route('/api/tags')
+def tag_search():
+    q      = request.args.get('q', '').strip()
+    locale = get_locale()
+    rows = supabase.rpc("search_tags", {
+        "keywords": q,
+        "locale":   locale
+    }).execute().data or []
+    # 回傳 JSON：[{id:..., name:...}, ...]
+    return jsonify(rows)

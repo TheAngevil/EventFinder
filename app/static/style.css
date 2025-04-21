@@ -115,3 +115,60 @@ button:hover,input[type="submit"]:hover{
   font-weight:bold;
 }
 .card-controls button:hover{text-decoration:underline;}
+
+/* 搜尋表單 */
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-form input[type="text"] {
+  flex: 1 1 200px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search-form select {
+  flex: 0 1 150px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.search-form button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: #7AB2B2;       /* 跟主品牌色一致 */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  background: #4D869C;       /* 深文字色 */
+}
+
+/* 活動卡片上的標籤 */
+.tags {
+  margin-top: 1rem;
+}
+
+.tag {
+  display: inline-block;
+  background: #EEF7FF;       /* 淺背景色 */
+  color: #4D869C;            /* 深文字色 */
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin: 0.2rem;
+}
+
+/* 詳情頁的標籤同樣套用 .tag 樣式 */
+.event-detail .tags {
+  margin: 1rem 0;
+}

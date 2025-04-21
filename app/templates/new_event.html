@@ -1,11 +1,67 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>{{ _('create event') }}</h2>
+<h2>{{ _('new_event_heading') }}</h2>
+
 <form method="POST">
-    {{ form.hidden_tag() }}
-    {{ form.title.label }} {{ form.title() }}<br>
-    {{ form.description.label }} {{ form.description() }}<br>
-    {{ form.date.label }} {{ form.date() }}<br>
-    {{ form.submit() }}
+  {{ form.hidden_tag() }}
+  <p>
+    <label for="tags">{{ _('new_event_title') }}</label><br>
+    {{ form.title(size=40) }}
+    {% if form.title.errors %}<br><span>{{ form.title.errors[0] }}</span>{% endif %}
+  </p>
+
+  <p>
+    <label for="tags">{{ _('new_event_description') }}</label><br>
+    {{ form.description(rows=4, cols=40) }}
+    {% if form.description.errors %}<br><span>{{ form.description.errors[0] }}</span>{% endif %}
+  </p>
+
+  <p>
+    <label for="tags">{{ _('new_event_date') }}</label><br>
+    {{ form.date(type="datetime-local") }}
+    {% if form.date.errors %}<br><span>{{ form.date.errors[0] }}</span>{% endif %}
+  </p>
+
+  <p>
+    <label for="tags">{{ _('new_event_tags_up_to_5') }}</label><br>
+    <select id="tags" name="tags" multiple="multiple" style="width:100%">
+      {% for id,label in form.tags.choices %}
+        <option value="{{ id }}" {% if id in form.tags.data %}selected{% endif %}>
+          {{ label }}
+        </option>
+      {% endfor %}
+    </select>
+    {% if form.tags.errors %}<br><span>{{ form.tags.errors[0] }}</span>{% endif %}
+  </p>
+    <p>
+      <button type="submit">{{ _('Create Event') }}</button>
+    </p>
 </form>
+
+<script>
+$(function(){
+  $('#tags').select2({
+    placeholder: "{{ _('Select or type to add tags') }}",
+    tags: true,                   // 允許使用者新增
+    tokenSeparators: [','],       // 以逗號分隔
+    ajax: {
+      url: "{{ url_for('main.tag_search') }}",
+      dataType: 'json',
+      delay: 250,
+      data: function(params) {
+        return { q: params.term };  // 傳 q 參數給後端
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(t){
+            return { id: t.id, text: t.name };
+          })
+        };
+      },
+      cache: true
+    },
+    minimumInputLength: 1
+  });
+});
+</script>
 {% endblock %}

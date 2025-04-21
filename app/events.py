@@ -45,7 +45,7 @@ def edit_event(id):
     form = EventForm(data={
         "title": event["title"],
         "description": event["description"],
-        "date": event["date"][:16]  # 去掉秒數方便表單顯示
+        "date": event["date"][:16]
     })
 
     if form.validate_on_submit():

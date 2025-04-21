@@ -3,6 +3,7 @@ from flask_babel import Babel
 from flask_wtf import CSRFProtect
 from .models import login_manager
 
+
 csrf = CSRFProtect()
 
 

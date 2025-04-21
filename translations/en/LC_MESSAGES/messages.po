@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-17 19:50+0800\n"
+"POT-Creation-Date: 2025-04-18 19:56+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,26 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: app/templates/attendees.html:9
-#, fuzzy
-msgid "attendees_email"
-msgstr "view attendees"
+#: app/routes.py:121
+msgid "Event created successfully"
+msgstr "Event created successfully"
+
+#: app/templates/attendees.html:3
+#, python-format
+msgid "Attendees for \"%(title)s\""
+msgstr "Attendees for \"%(title)s\""
+
+#: app/templates/attendees.html:9 app/templates/login.html:7
+#: app/templates/register.html:7
+msgid "Email"
+msgstr "Email"
 
 #: app/templates/attendees.html:10
-msgid "attendees_registered_at"
-msgstr "報名時間"
+msgid "Registered At"
+msgstr "Register"
 
 #: app/templates/attendees.html:11
-msgid "attendees_Checked In"
-msgstr "是否確認出席"
+msgid "Checked In"
+msgstr "Checked In"
 
-#: app/templates/attendees.html:28
+#: app/templates/attendees.html:32
 msgid "Save Check-in Status"
 msgstr "Save Check-in Status"
 
-#: app/templates/attendees.html:31
-msgid "back_to_last_page"
-msgstr "回上一頁"
+#: app/templates/attendees.html:37
+msgid "Back to My Events"
+msgstr "back to my event"
 
 #: app/templates/edit_event.html:3
 msgid "edit_event_edit_event"
@@ -47,148 +56,164 @@ msgstr "Editing Event"
 msgid "back to my events"
 msgstr "back to my event"
 
-#: app/templates/event_detail.html:13
-#, fuzzy
-msgid "Log in"
-msgstr "Log in"
-
-#: app/templates/event_detail.html:13
-msgid "for more actions"
-msgstr "for more actions"
-
-#: app/templates/events.html:3
-msgid "upcoming events"
-msgstr "upcoming events"
-
-#: app/templates/events.html:13
-msgid "view details"
-msgstr "view details"
-
-#: app/templates/events.html:17
+#: app/templates/event_detail.html:19 app/templates/events.html:47
+#: app/templates/my_events.html:14
 msgid "Edit"
 msgstr "Edit"
 
-#: app/templates/events.html:20
+#: app/templates/event_detail.html:24 app/templates/events.html:55
+#: app/templates/my_events.html:18
+msgid "Delete this event?"
+msgstr "Create Event"
+
+#: app/templates/event_detail.html:25 app/templates/events.html:56
+#: app/templates/my_events.html:19
 msgid "Delete"
 msgstr "Delete"
 
-#: app/templates/events.html:28
-msgid "event_not_found"
+#: app/templates/event_form.html:3
+msgid "Create / Edit Event"
+msgstr "Create Event"
+
+#: app/templates/event_form.html:12
+msgid "event_create_edit_max_5_tags"
+msgstr "5 Tags max"
+
+#: app/templates/event_form.html:14
+msgid "Submit"
+msgstr "Submit"
+
+#: app/templates/events.html:4
+msgid "Upcoming Events"
+msgstr "Upcoming Events"
+
+#: app/templates/events.html:9
+msgid "Search by keyword..."
+msgstr "Search your event by keyword"
+
+#: app/templates/events.html:21
+msgid "Search"
+msgstr "Search"
+
+#: app/templates/events.html:41
+msgid "View Details"
+msgstr "view details"
+
+#: app/templates/events.html:65
+msgid "No events found."
 msgstr "Event not found"
 
-#: app/templates/events.html:32
-#, fuzzy
+#: app/templates/events.html:72 app/templates/my_events.html:34
 msgid "Create New Event"
 msgstr "Create New Event"
 
-#: app/templates/layout.html:5
+#: app/templates/layout.html:7
 msgid "Activity MVP"
 msgstr "Gather MVP"
 
-#: app/templates/layout.html:13
+#: app/templates/layout.html:23
 msgid "Let's Gather!"
 msgstr "Let's Gather!"
 
-#: app/templates/layout.html:14
+#: app/templates/layout.html:24
 msgid "Find and manage the events you love."
 msgstr "Find and manage the events you love."
 
-#: app/templates/layout.html:19
+#: app/templates/layout.html:29
 msgid "Hello,"
 msgstr "Hello,"
 
-#: app/templates/layout.html:21
+#: app/templates/layout.html:31
 msgid "Hello, Guest"
 msgstr "Hello, Guest"
 
-#: app/templates/layout.html:24
+#: app/templates/layout.html:34
 msgid "Home"
 msgstr "Home"
 
-#: app/templates/layout.html:25
+#: app/templates/layout.html:35
 msgid "Events"
 msgstr "Events"
 
-#: app/templates/layout.html:28
+#: app/templates/layout.html:38
 msgid "My Registration Events"
 msgstr "My Registration Events"
 
-#: app/templates/layout.html:29
+#: app/templates/layout.html:39 app/templates/new_event.html:37
 msgid "Create Event"
 msgstr "Create Event"
 
-#: app/templates/layout.html:30
+#: app/templates/layout.html:40
 msgid "My Events"
 msgstr "My Events"
 
-#: app/templates/layout.html:31
+#: app/templates/layout.html:41
 msgid "Logout"
 msgstr "Logout"
 
-#: app/templates/layout.html:33
+#: app/templates/layout.html:43 app/templates/login.html:3
+#: app/templates/login.html:17
 msgid "Login"
 msgstr "Login"
 
-#: app/templates/layout.html:34
+#: app/templates/layout.html:44 app/templates/register.html:3
+#: app/templates/register.html:17
 msgid "Register"
 msgstr "Register"
 
-#: app/templates/layout.html:40
+#: app/templates/layout.html:50
 msgid "繁體中文"
-msgstr "Traditional Chinese"
+msgstr "繁體中文"
 
-#: app/templates/layout.html:41
+#: app/templates/layout.html:51
 msgid "English"
 msgstr "English"
 
-#: app/templates/login.html:3
-#, fuzzy
-msgid "login"
-msgstr "Login"
+#: app/templates/login.html:12 app/templates/register.html:12
+msgid "Password"
+msgstr "Password"
 
 #: app/templates/my_events.html:3
-#, fuzzy
-msgid "my created event"
+msgid "My Created Events"
 msgstr "My created event"
 
-#: app/templates/my_events.html:12
-msgid "edit"
-msgstr "Edit"
-
-#: app/templates/my_events.html:15
-msgid "delete"
-msgstr "delete"
-
-#: app/templates/my_events.html:17
-msgid "view attendees"
+#: app/templates/my_events.html:23
+msgid "View Attendees"
 msgstr "view attendees"
 
-#: app/templates/my_events.html:21
-msgid "you have not created event yet"
+#: app/templates/my_events.html:29
+msgid "You have not created any events yet."
 msgstr "You have not created event yet"
 
-#: app/templates/my_events.html:25
-#, fuzzy
-msgid "create new event"
-msgstr "Create Event"
-
 #: app/templates/my_registrations.html:3
-#, fuzzy
 msgid "my registered events"
 msgstr "Registered At"
 
 #: app/templates/my_registrations.html:15
-#, fuzzy
 msgid "no registered events"
 msgstr "Registered At"
 
 #: app/templates/new_event.html:3
-#, fuzzy
-msgid "create event"
-msgstr "Create Event"
+msgid "new_event_heading"
+msgstr "Creating Event"
 
-#: app/templates/register.html:3
-#, fuzzy
-msgid "register"
-msgstr "Register"
+#: app/templates/new_event.html:8
+msgid "new_event_title"
+msgstr "Event Title"
+
+#: app/templates/new_event.html:14
+msgid "new_event_description"
+msgstr "Description"
+
+#: app/templates/new_event.html:20
+msgid "new_event_date"
+msgstr "Date"
+
+#: app/templates/new_event.html:26
+msgid "new_event_tags_up_to_5"
+msgstr "Up to 5 tags"
+
+#: app/templates/new_event.html:44
+msgid "Select or type to add tags"
+msgstr "Select or type to search or add tags"
 

@@ -1,32 +1,40 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Attendees for "{{ event.title }}"</h2>
+  <h2>{{ _('Attendees for "%(title)s"', title=event.title) }}</h2>
 
-<form method="POST" action="{{ url_for('main.update_checkin', event_id=event.id) }}">
+  <form method="POST" action="{{ url_for('main.update_checkin', event_id=event.id) }}">
     <table border="1" cellpadding="6">
-        <thead>
-            <tr>
-                <th>{{ _('attendees_email') }}</th>
-                <th>{{ _('attendees_registered_at') }}</th>
-                <th>{{ _('attendees_Checked In') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for attendee in attendees %}
-                <tr>
-                    <td>{{ attendee.email }}</td>
-                    <td>{{ attendee.timestamp }}</td>
-                    <td>
-                        <input type="checkbox" name="checkin_{{ attendee.user_id }}" {% if attendee.is_checked_in %}checked{% endif %}>
-                        <!--TODO There is a issue with attendee submission, comeback later and fix it-->
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr>
+          <th>{{ _('Email') }}</th>
+          <th>{{ _('Registered At') }}</th>
+          <th>{{ _('Checked In') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for attendee in attendees %}
+          <tr>
+            <td>{{ attendee.email }}</td>
+            <td>{{ attendee.timestamp }}</td>
+            <td>
+              <input
+                type="checkbox"
+                name="checkin_{{ attendee.user_id }}"
+                {% if attendee.is_checked_in %}checked{% endif %}
+              >
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button type="submit">{{ _('Save Check-in Status') }}</button>
-</form>
 
-<a href="{{ url_for('main.my_events') }}">{{ _('back_to_last_page') }}</a>
+    {{ form.hidden_tag() }}
+    <button type="submit">{{ _('Save Check-in Status') }}</button>
+  </form>
+
+  <p>
+    <a href="{{ url_for('main.my_events') }}">
+      {{ _('Back to My Events') }}
+    </a>
+  </p>
 {% endblock %}

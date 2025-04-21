@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ _('Create / Edit Event') }}</h2>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <p>{{ form.title.label }}<br>{{ form.title() }}</p>
+  <p>{{ form.description.label }}<br>{{ form.description() }}</p>
+  <p>{{ form.date.label }}<br>{{ form.date() }}</p>
+  <p>
+    {{ form.tags.label }}<br>
+    {{ form.tags(size=5, multiple=true) }}
+    <small>{{ _('event_create_edit_max_5_tags') }}</small>
+  </p>
+  <p><button type="submit">{{ _('Submit') }}</button></p>
+</form>
+{% endblock %}

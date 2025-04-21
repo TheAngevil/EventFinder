@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-17 19:50+0800\n"
+"POT-Creation-Date: 2025-04-18 19:56+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant_TW\n"
@@ -18,26 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: app/templates/attendees.html:9
-#, fuzzy
-msgid "attendees_email"
-msgstr "參與者"
+#: app/routes.py:121
+msgid "Event created successfully"
+msgstr "活動創建成功"
+
+#: app/templates/attendees.html:3
+#, python-format
+msgid "Attendees for \"%(title)s\""
+msgstr "\"%(title)s\" 的出席者名單"
+
+#: app/templates/attendees.html:9 app/templates/login.html:7
+#: app/templates/register.html:7
+msgid "Email"
+msgstr "電子信箱"
 
 #: app/templates/attendees.html:10
-msgid "attendees_registered_at"
-msgstr "報名時間"
+msgid "Registered At"
+msgstr "註冊"
 
 #: app/templates/attendees.html:11
-msgid "attendees_Checked In"
-msgstr "是否確認出席"
+msgid "Checked In"
+msgstr "確認出席"
 
-#: app/templates/attendees.html:28
+#: app/templates/attendees.html:32
 msgid "Save Check-in Status"
 msgstr "儲存出席狀態"
 
-#: app/templates/attendees.html:31
-msgid "back_to_last_page"
-msgstr "回上一頁"
+#: app/templates/attendees.html:37
+msgid "Back to My Events"
+msgstr "回到我的活動"
 
 #: app/templates/edit_event.html:3
 msgid "edit_event_edit_event"
@@ -47,157 +56,163 @@ msgstr "活動編輯中"
 msgid "back to my events"
 msgstr "回到我的活動"
 
-#: app/templates/event_detail.html:13
-#, fuzzy
-msgid "Log in"
-msgstr "登入"
-
-#: app/templates/event_detail.html:13
-msgid "for more actions"
-msgstr "進行其他動作"
-
-#: app/templates/events.html:3
-msgid "upcoming events"
-msgstr "接下來的活動"
-
-#: app/templates/events.html:13
-msgid "view details"
-msgstr "看更多"
-
-#: app/templates/events.html:17
+#: app/templates/event_detail.html:19 app/templates/events.html:47
+#: app/templates/my_events.html:14
 msgid "Edit"
 msgstr "編輯"
 
-#: app/templates/events.html:20
+#: app/templates/event_detail.html:24 app/templates/events.html:55
+#: app/templates/my_events.html:18
+msgid "Delete this event?"
+msgstr "舉辦活動"
+
+#: app/templates/event_detail.html:25 app/templates/events.html:56
+#: app/templates/my_events.html:19
 msgid "Delete"
 msgstr "刪除"
 
-#: app/templates/events.html:28
-msgid "event_not_found"
+#: app/templates/event_form.html:3
+msgid "Create / Edit Event"
+msgstr "舉辦活動"
+
+#: app/templates/event_form.html:12
+msgid "event_create_edit_max_5_tags"
+msgstr "最多五個標籤"
+
+#: app/templates/event_form.html:14
+msgid "Submit"
+msgstr "提交"
+
+#: app/templates/events.html:4
+msgid "Upcoming Events"
+msgstr "接下來的活動"
+
+#: app/templates/events.html:9
+msgid "Search by keyword..."
+msgstr "開始尋找您感興趣的活動"
+
+#: app/templates/events.html:21
+msgid "Search"
+msgstr "搜尋"
+
+#: app/templates/events.html:41
+msgid "View Details"
+msgstr "看更多"
+
+#: app/templates/events.html:65
+msgid "No events found."
 msgstr "找不到活動"
 
-#: app/templates/events.html:32
-#, fuzzy
+#: app/templates/events.html:72 app/templates/my_events.html:34
 msgid "Create New Event"
 msgstr "舉辦活動"
 
-#: app/templates/layout.html:5
+#: app/templates/layout.html:7
 msgid "Activity MVP"
 msgstr "聚 MVP"
 
-#: app/templates/layout.html:13
+#: app/templates/layout.html:23
 msgid "Let's Gather!"
 msgstr "讓我們聚一起"
 
-#: app/templates/layout.html:14
+#: app/templates/layout.html:24
 msgid "Find and manage the events you love."
 msgstr "探索並享受你最愛的活動"
 
-#: app/templates/layout.html:19
+#: app/templates/layout.html:29
 msgid "Hello,"
 msgstr "你好，"
 
-#: app/templates/layout.html:21
+#: app/templates/layout.html:31
 msgid "Hello, Guest"
 msgstr "你好，訪客"
 
-#: app/templates/layout.html:24
+#: app/templates/layout.html:34
 msgid "Home"
 msgstr "首頁"
 
-#: app/templates/layout.html:25
+#: app/templates/layout.html:35
 msgid "Events"
 msgstr "活動"
 
-#: app/templates/layout.html:28
+#: app/templates/layout.html:38
 msgid "My Registration Events"
 msgstr "我登記的活動"
 
-#: app/templates/layout.html:29
+#: app/templates/layout.html:39 app/templates/new_event.html:37
 msgid "Create Event"
 msgstr "舉辦活動"
 
-#: app/templates/layout.html:30
+#: app/templates/layout.html:40
 msgid "My Events"
 msgstr "我的活動"
 
-#: app/templates/layout.html:31
+#: app/templates/layout.html:41
 msgid "Logout"
 msgstr "登出"
 
-#: app/templates/layout.html:33
+#: app/templates/layout.html:43 app/templates/login.html:3
+#: app/templates/login.html:17
 msgid "Login"
 msgstr "登入"
 
-#: app/templates/layout.html:34
+#: app/templates/layout.html:44 app/templates/register.html:3
+#: app/templates/register.html:17
 msgid "Register"
 msgstr "註冊"
 
-#: app/templates/layout.html:40
+#: app/templates/layout.html:50
 msgid "繁體中文"
 msgstr "繁體中文"
 
-#: app/templates/layout.html:41
+#: app/templates/layout.html:51
 msgid "English"
 msgstr "英文"
 
-#: app/templates/login.html:3
-#, fuzzy
-msgid "login"
-msgstr "登入"
+#: app/templates/login.html:12 app/templates/register.html:12
+msgid "Password"
+msgstr "密碼"
 
 #: app/templates/my_events.html:3
-#, fuzzy
-msgid "my created event"
+msgid "My Created Events"
 msgstr "我舉辦的活動"
 
-#: app/templates/my_events.html:12
-msgid "edit"
-msgstr "編輯"
-
-#: app/templates/my_events.html:15
-msgid "delete"
-msgstr "刪除"
-
-#: app/templates/my_events.html:17
-msgid "view attendees"
+#: app/templates/my_events.html:23
+msgid "View Attendees"
 msgstr "查看參與者"
 
-#: app/templates/my_events.html:21
-msgid "you have not created event yet"
+#: app/templates/my_events.html:29
+msgid "You have not created any events yet."
 msgstr "尚未創建活動"
 
-#: app/templates/my_events.html:25
-#, fuzzy
-msgid "create new event"
-msgstr "舉辦活動"
-
 #: app/templates/my_registrations.html:3
-#, fuzzy
 msgid "my registered events"
 msgstr "我報名的活動"
 
 #: app/templates/my_registrations.html:15
-#, fuzzy
 msgid "no registered events"
 msgstr "沒有報名的活動"
 
 #: app/templates/new_event.html:3
-#, fuzzy
-msgid "create event"
-msgstr "舉辦活動"
+msgid "new_event_heading"
+msgstr "活動編輯中"
 
-#: app/templates/register.html:3
-#, fuzzy
-msgid "register"
-msgstr "註冊"
+#: app/templates/new_event.html:8
+msgid "new_event_title"
+msgstr "活動標題"
 
-#~ msgid "Email"
-#~ msgstr "信箱地址"
+#: app/templates/new_event.html:14
+msgid "new_event_description"
+msgstr "說明"
 
-#~ msgid "Registered At"
-#~ msgstr "報名時間"
+#: app/templates/new_event.html:20
+msgid "new_event_date"
+msgstr "日期"
 
-#~ msgid "Checked In"
-#~ msgstr "確認出席"
+#: app/templates/new_event.html:26
+msgid "new_event_tags_up_to_5"
+msgstr "最多五個標籤"
 
+#: app/templates/new_event.html:44
+msgid "Select or type to add tags"
+msgstr "搜尋想新增的標籤(最多五個標籤)"
