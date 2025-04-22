@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="container" style="max-width:600px; margin:2rem auto; text-align:center;">
+    <h2 style="color:#7AB2B2;">{{ _('Email Confirmation Required') }}</h2>
+    <p>{{ _('Your email address has not been confirmed yet.') }}</p>
+    <p>{{ _('Please check your inbox for a confirmation link.') }}</p>
+    <p>
+      {{ _("Didn't receive it?") }}
+      <a href="{{ url_for('main.resend_confirmation') }}"
+         class="btn btn-primary">
+        {{ _('Resend Confirmation Email') }}
+      </a>
+    </p>
+    <p>
+      <a href="{{ url_for('main.logout') }}" class="btn btn-secondary">
+        {{ _('Logout') }}
+      </a>
+    </p>
+  </div>
+{% endblock %}

@@ -1,15 +1,18 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session, jsonify
+from functools import wraps
+import re
+
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session, jsonify, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_babel import _
 from postgrest import APIError
-
-from .forms import LoginForm, RegisterForm, EventForm
-from .models import User # 後續會補上
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from supabase import create_client
-import re
-from . import get_locale
 
+from secrets_tool.token import TokenTool
+from . import get_locale
+from mail import mail
+from .forms import LoginForm, RegisterForm, EventForm, ForgotPasswordForm, ResetPasswordForm
+from .models import User # 後續會補上
 
 supabase = None
 
@@ -17,6 +20,15 @@ def init_supabase():
     global supabase
     if supabase is None:
         supabase = create_client(current_app.config['SUPABASE_URL'], current_app.config['SUPABASE_KEY'])
+
+def confirmed_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not current_user.email_confirmed:
+            flash(_('Please confirm your email address first.'), 'warning')
+            return redirect(url_for('main.unconfirmed'))
+        return f(*args, **kwargs)
+    return decorated
 
 main = Blueprint('main', __name__)
 
@@ -27,14 +39,14 @@ def index():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    print(f"debug validate on submit: + {form.validate_on_submit()}")
     if form.validate_on_submit():
-        user = User.get_by_email(form.email.data)  # 後續補上
-        print("debug login get_by_email" + f"{user}")
+        user = User.get_by_email(form.email.data)
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
+            if not user.email_confirmed:
+                return redirect(url_for('main.unconfirmed'))
             return redirect(url_for('main.index'))
-        flash('Invalid login credentials')
+        flash(_('Invalid credentials'), 'danger')
     return render_template('login.html', form=form)
 
 @main.route('/logout')
@@ -53,13 +65,16 @@ def register():
         if user_exists:
             flash('Email already registered.')
         else:
+            mail_address = form.email.data
             User.create(email=form.email.data, password=form.password.data)
-            flash('Account created. Please log in.')
+            mail.send_confirmation_email(mail_address)
+            flash(_("register_confirmation_information %(email)s.", email=mail_address), "info")
             return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
 
 @main.route('/events/new', methods=['GET', 'POST'])
 @login_required
+@confirmed_required
 def create_event():
     from .forms import EventForm
 
@@ -167,6 +182,7 @@ def event_list():
 
 @main.route('/my-registrations')
 @login_required
+@confirmed_required
 def my_registrations():
     init_supabase()
     # 取得使用者報名過的 event_id
@@ -190,6 +206,7 @@ def my_registrations():
 
 @main.route('/my-events')
 @login_required
+@confirmed_required
 def my_events():
     q = request.args.get('q', '').strip()
     init_supabase()
@@ -218,6 +235,7 @@ def my_events():
 
 @main.route('/events/<id>/edit', methods=['GET', 'POST'])
 @login_required
+@confirmed_required
 def edit_event(id):
     init_supabase()
 
@@ -261,6 +279,7 @@ def edit_event(id):
 
 @main.route('/events/<id>/delete', methods=['POST'])
 @login_required
+@confirmed_required
 def delete_event(id):
     init_supabase()
 
@@ -292,6 +311,7 @@ def delete_event(id):
 
 @main.route('/events/<id>/attendees')
 @login_required
+@confirmed_required
 def view_attendees(id):
     init_supabase()
 
@@ -319,6 +339,7 @@ def view_attendees(id):
 
 @main.route('/events/<event_id>/attendees/checkin', methods=['POST'])
 @login_required
+@confirmed_required
 def update_checkin(event_id):
     init_supabase()
 
@@ -399,3 +420,86 @@ def api_events():
         print("api_events_error" + api_err.message)
     finally:
         return jsonify(events)
+
+
+@main.route('/confirm/<token>')
+def confirm_email(token):
+    from secrets_tool.token import TokenTool
+    from datetime import datetime, timezone
+    email = TokenTool.confirm_token(token)
+    if not email:
+        flash(_('confirmation_expired'), 'danger')
+        return redirect(url_for('main.login'))
+
+    # 取得 user，並標記已驗證
+    try:
+        init_supabase()
+        user = supabase.table("users").select("*").eq("email", email).single().execute().data
+        if not user:
+            flash(_('Account not found.'), 'warning')
+            return redirect(url_for('main.register'))
+
+        if user.get('email_confirmed'):
+            flash(_('Account already confirmed. Please login.'), 'success')
+        else:
+            supabase.table("users").update({
+                "email_confirmed": True,
+                "email_confirmed_at": datetime.now(timezone.utc).isoformat()
+            }).eq("email", email).execute()
+            flash(_('You have confirmed your email. Thanks!'), 'success')
+    except APIError as error:
+        print("confirm_email_error: " + error.message)
+
+    return redirect(url_for('main.login'))
+
+
+@main.route('/unconfirmed')
+@login_required
+def unconfirmed():
+    # 已驗證者不應進來
+    if current_user.email_confirmed:
+        return redirect(url_for('main.index'))
+    return render_template('unconfirmed.html')
+
+
+@main.route('/resend-confirmation')
+@login_required
+def resend_confirmation():
+    # 已驗證者不必重寄
+    if current_user.email_confirmed:
+        return redirect(url_for('main.index'))
+
+    # 寄出確認信
+    mail.send_confirmation_email(current_user.email)
+    flash(_('A new confirmation email has been sent.'), 'success')
+    return redirect(url_for('main.unconfirmed'))
+
+@main.route('/forgot-password', methods=['GET','POST'])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        mail.send_password_reset_email(form.email.data)
+        flash(_('A password reset email has been sent to %(email)s.', email=form.email.data), 'info')
+        return redirect(url_for('main.login'))
+    return render_template('forgot_password.html', form=form)
+
+
+@main.route('/reset-password/<token>', methods=['GET','POST'])
+def reset_password(token):
+    email = TokenTool.confirm_password_reset_token(token)
+    if not email:
+        flash(_('The reset link is invalid or has expired.'), 'danger')
+        return redirect(url_for('main.forgot_password'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        init_supabase()
+        pw_hash = generate_password_hash(form.password.data)
+        supabase.table("users") \
+            .update({"password_hash": pw_hash}) \
+            .eq("email", email) \
+            .execute()
+        flash(_('Your password has been updated! Please log in.'), 'success')
+        return redirect(url_for('main.login'))
+
+    return render_template('reset_password.html', form=form)

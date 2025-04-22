@@ -14,7 +14,12 @@
       {% for err in form.password.errors %}<br><span class="error">{{ err }}</span>{% endfor %}
     </p>
     <p>
-      <button type="submit">{{ _('Login') }}</button>
+      <button type="submit" class="btn">{{ _('Login') }}</button>
+    </p>
+    <p>
+      <a href="{{ url_for('main.forgot_password') }}" class="link">
+        {{ _('Forgot Password?') }}
+      </a>
     </p>
   </form>
 {% endblock %}

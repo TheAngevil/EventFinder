@@ -13,22 +13,23 @@ def init_supabase():
     if supabase is None:
         supabase = create_client(current_app.config['SUPABASE_URL'], current_app.config['SUPABASE_KEY'])
 
+
 class User(UserMixin):
-    def __init__(self, id, email, role, password_hash):
+    def __init__(self, id, email, role, password_hash, email_confirmed):
         self.id = id
         self.email = email
         self.role = role
         self.password_hash = password_hash
+        self.email_confirmed = email_confirmed
 
     @staticmethod
     def get_by_email(email):
         init_supabase()
         try:
             result = supabase.table('users').select("*").eq("email", email).single().execute()
-            print(f"debug get_by_email result.data:  {result.data}")
             if result.data:
                 return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
-                            password_hash=result.data['password_hash'])
+                            password_hash=result.data['password_hash'], email_confirmed=result.data['email_confirmed'])
         except APIError as api_err:
             print("get_by_email_error:" + api_err.message)
             return None
@@ -41,7 +42,7 @@ class User(UserMixin):
             result = (supabase.table('users').select("*").eq("id", user_id).single().execute())
             if result.data:
                 return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
-                            password_hash=result.data['password_hash'])
+                            password_hash=result.data['password_hash'], email_confirmed=result.data['email_confirmed'])
         except APIError as err:
             print("get_by_id_error" + err.message)
             return None
@@ -49,7 +50,6 @@ class User(UserMixin):
     @staticmethod
     def create(email, password, role="participant"):
         init_supabase()
-        # 實際情況下你可以另外儲存 password_hash
         from werkzeug.security import generate_password_hash
         password_hash = generate_password_hash(password)
         result = supabase.table("users").insert({

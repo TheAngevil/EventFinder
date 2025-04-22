@@ -2,6 +2,7 @@ flask
 flask-wtf
 flask-login
 Flask-Babel
+Flask-Mail
 python-dotenv
 requests
 gunicorn
@@ -9,3 +10,4 @@ supabase
 postgrest
 email-validator
 postgrest-py==0.10.6
+itsdangerous

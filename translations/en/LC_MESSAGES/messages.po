@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-18 19:56+0800\n"
+"POT-Creation-Date: 2025-04-22 17:20+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,17 +18,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: app/routes.py:121
+#: app/routes.py:28
+msgid "Please confirm your email address first."
+msgstr "Please confirm your email address first."
+
+#: app/routes.py:49
+msgid "Invalid credentials"
+msgstr "Invalid credentials"
+
+#: app/routes.py:71
+#, python-format
+msgid "register_confirmation_information %(email)s."
+msgstr "register_confirmation_information %(email)s."
+
+#: app/routes.py:144
 msgid "Event created successfully"
 msgstr "Event created successfully"
+
+#: app/routes.py:431
+msgid "confirmation_expired"
+msgstr "confirmation mail expired."
+
+#: app/routes.py:439
+msgid "Account not found."
+msgstr "Account not found."
+
+#: app/routes.py:443
+msgid "Account already confirmed. Please login."
+msgstr "Account already confirmed. Please login."
+
+#: app/routes.py:449
+msgid "You have confirmed your email. Thanks!"
+msgstr "We have confirmed your email. Thanks!"
+
+#: app/routes.py:474
+msgid "A new confirmation email has been sent."
+msgstr "A new confirmation email has been sent."
+
+#: app/routes.py:482
+#, python-format
+msgid "A password reset email has been sent to %(email)s."
+msgstr "A password reset email has been sent to %(email)s."
+
+#: app/routes.py:491
+msgid "The reset link is invalid or has expired."
+msgstr "The reset link is invalid or has expired."
+
+#: app/routes.py:502
+msgid "Your password has been updated! Please log in."
+msgstr "Your password has been updated! Please log in."
 
 #: app/templates/attendees.html:3
 #, python-format
 msgid "Attendees for \"%(title)s\""
 msgstr "Attendees for \"%(title)s\""
 
-#: app/templates/attendees.html:9 app/templates/login.html:7
-#: app/templates/register.html:7
+#: app/templates/attendees.html:9 app/templates/forgot_password.html:7
+#: app/templates/login.html:7 app/templates/register.html:7
 msgid "Email"
 msgstr "Email"
 
@@ -40,11 +86,11 @@ msgstr "Register"
 msgid "Checked In"
 msgstr "Checked In"
 
-#: app/templates/attendees.html:32
+#: app/templates/attendees.html:31
 msgid "Save Check-in Status"
 msgstr "Save Check-in Status"
 
-#: app/templates/attendees.html:37
+#: app/templates/attendees.html:36
 msgid "Back to My Events"
 msgstr "back to my event"
 
@@ -56,18 +102,15 @@ msgstr "Editing Event"
 msgid "back to my events"
 msgstr "back to my event"
 
-#: app/templates/event_detail.html:19 app/templates/events.html:47
-#: app/templates/my_events.html:14
+#: app/templates/event_detail.html:19 app/templates/my_events.html:33
 msgid "Edit"
 msgstr "Edit"
 
-#: app/templates/event_detail.html:24 app/templates/events.html:55
-#: app/templates/my_events.html:18
+#: app/templates/event_detail.html:24 app/templates/my_events.html:41
 msgid "Delete this event?"
 msgstr "Create Event"
 
-#: app/templates/event_detail.html:25 app/templates/events.html:56
-#: app/templates/my_events.html:19
+#: app/templates/event_detail.html:25 app/templates/my_events.html:42
 msgid "Delete"
 msgstr "Delete"
 
@@ -87,25 +130,35 @@ msgstr "Submit"
 msgid "Upcoming Events"
 msgstr "Upcoming Events"
 
-#: app/templates/events.html:9
+#: app/templates/events.html:13
 msgid "Search by keyword..."
 msgstr "Search your event by keyword"
 
-#: app/templates/events.html:21
+#: app/templates/events.html:15 app/templates/my_events.html:12
 msgid "Search"
 msgstr "Search"
 
-#: app/templates/events.html:41
+#: app/templates/events.html:23
+msgid "Loading more events..."
+msgstr "Loading more events..."
+
+#: app/templates/events.html:48
 msgid "View Details"
 msgstr "view details"
 
-#: app/templates/events.html:65
-msgid "No events found."
-msgstr "Event not found"
+#: app/templates/forgot_password.html:3
+#, fuzzy
+msgid "Forgot Password"
+msgstr "Password"
 
-#: app/templates/events.html:72 app/templates/my_events.html:34
-msgid "Create New Event"
-msgstr "Create New Event"
+#: app/templates/forgot_password.html:11
+msgid "Send Reset Email"
+msgstr "Send Reset Email"
+
+#: app/templates/forgot_password.html:13
+#, fuzzy
+msgid "Back to Login"
+msgstr "back to my event"
 
 #: app/templates/layout.html:7
 msgid "Activity MVP"
@@ -127,10 +180,6 @@ msgstr "Hello,"
 msgid "Hello, Guest"
 msgstr "Hello, Guest"
 
-#: app/templates/layout.html:34
-msgid "Home"
-msgstr "Home"
-
 #: app/templates/layout.html:35
 msgid "Events"
 msgstr "Events"
@@ -147,7 +196,7 @@ msgstr "Create Event"
 msgid "My Events"
 msgstr "My Events"
 
-#: app/templates/layout.html:41
+#: app/templates/layout.html:41 app/templates/unconfirmed.html:16
 msgid "Logout"
 msgstr "Logout"
 
@@ -173,15 +222,28 @@ msgstr "English"
 msgid "Password"
 msgstr "Password"
 
+#: app/templates/login.html:21
+msgid "Forgot Password?"
+msgstr "Forgot Password?"
+
 #: app/templates/my_events.html:3
 msgid "My Created Events"
 msgstr "My created event"
 
-#: app/templates/my_events.html:23
+#: app/templates/my_events.html:9
+#, fuzzy
+msgid "Search my events..."
+msgstr "back to my event"
+
+#: app/templates/my_events.html:18
+msgid "Create New Event"
+msgstr "Create New Event"
+
+#: app/templates/my_events.html:47
 msgid "View Attendees"
 msgstr "view attendees"
 
-#: app/templates/my_events.html:29
+#: app/templates/my_events.html:54
 msgid "You have not created any events yet."
 msgstr "You have not created event yet"
 
@@ -216,4 +278,112 @@ msgstr "Up to 5 tags"
 #: app/templates/new_event.html:44
 msgid "Select or type to add tags"
 msgstr "Select or type to search or add tags"
+
+#: app/templates/mail/reset_password.html:3 app/templates/reset_password.html:3
+msgid "Reset Your Password"
+msgstr "Reset Your Password"
+
+#: app/templates/reset_password.html:7
+msgid "New Password"
+msgstr "New Password"
+
+#: app/templates/reset_password.html:12
+msgid "Confirm Password"
+msgstr "Confirm Password."
+
+#: app/templates/reset_password.html:16
+#, fuzzy
+msgid "Reset Password"
+msgstr "Password Reset"
+
+#: app/templates/unconfirmed.html:4
+msgid "Email Confirmation Required"
+msgstr "Email Confirmation Required"
+
+#: app/templates/unconfirmed.html:5
+msgid "Your email address has not been confirmed yet."
+msgstr "Your email address has not been confirmed yet."
+
+#: app/templates/unconfirmed.html:6
+msgid "Please check your inbox for a confirmation link."
+msgstr "Please check your inbox for a confirmation link."
+
+#: app/templates/unconfirmed.html:8
+msgid "Didn't receive it?"
+msgstr "Didn't receive it?"
+
+#: app/templates/unconfirmed.html:11
+msgid "Resend Confirmation Email"
+msgstr "Resend Confirmation Email"
+
+#: app/templates/mail/confirm.html:5
+msgid "Please Confirm Your Email"
+msgstr "Please Confirm Your Email"
+
+#: app/templates/mail/confirm.html:12
+msgid "Confirm Your Email Address"
+msgstr "Confirm Your Email Address"
+
+#: app/templates/mail/confirm.html:21
+msgid "Hi there,"
+msgstr "Hi there,"
+
+#: app/templates/mail/confirm.html:23
+msgid ""
+"Thank you for registering on our site! Please click the button below to "
+"verify your email address and complete your registration."
+msgstr ""
+"Thank you for registering on our site! Please click the button below to "
+"verify your email address and complete your registration."
+
+#: app/templates/mail/confirm.html:30
+msgid "Verify My Email"
+msgstr "Verify My Email"
+
+#: app/templates/mail/confirm.html:34
+msgid ""
+"If the button above does not work, copy and paste the following link into"
+" your browser:"
+msgstr ""
+"If the button above does not work, copy and paste the following link into"
+" your browser:"
+
+#: app/templates/mail/confirm.html:42
+msgid "If you did not create an account, no further action is required."
+msgstr "If you did not create an account, no further action is required."
+
+#: app/templates/mail/confirm.html:48 app/templates/mail/reset_password.html:31
+msgid "Your Company Name"
+msgstr "MVP Project"
+
+#: app/templates/mail/confirm.html:48 app/templates/mail/reset_password.html:31
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+#: app/templates/mail/reset_password.html:8
+msgid "Password Reset"
+msgstr "Password Reset"
+
+#: app/templates/mail/reset_password.html:16
+msgid ""
+"You requested a password reset. Click the button below to choose a new "
+"password:"
+msgstr ""
+"You requested a password reset. Click the button below to choose a new "
+"password:"
+
+#: app/templates/mail/reset_password.html:21
+msgid "Reset My Password"
+msgstr "Reset My Password"
+
+#: app/templates/mail/reset_password.html:25
+msgid "If you did not request this, simply ignore this email."
+msgstr "If you did not request this, simply ignore this email."
+
+
+#~ msgid "No events found."
+#~ msgstr "Event not found"
+
+#~ msgid "Home"
+#~ msgstr "Home"
 
