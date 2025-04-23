@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask import current_app
 from postgrest import APIError
-from wtforms import StringField, TextAreaField, DateTimeField, PasswordField, SelectMultipleField, DateTimeLocalField
+from wtforms import StringField, TextAreaField, DateTimeField, PasswordField, SelectMultipleField, DateTimeLocalField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, ValidationError, EqualTo
 from wtforms.fields import SubmitField
 from flask_babel import _
@@ -39,6 +39,7 @@ class EventForm(FlaskForm):
         coerce=str,
         validators=[DataRequired(message="Please pick at least one tag.")]
     )
+    is_public = BooleanField(_('Public Event'), default=True)
     submit = SubmitField('Create Event')
 
     def validate_tags(self, field):
@@ -64,7 +65,6 @@ class ForgotPasswordForm(FlaskForm):
                 raise ValidationError("No account with that email.")
         except APIError:
                 raise ValidationError("No account with that email.")
-
 
 
 class ResetPasswordForm(FlaskForm):

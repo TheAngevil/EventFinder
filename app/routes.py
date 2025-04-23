@@ -12,7 +12,8 @@ from secrets_tool.token import TokenTool
 from . import get_locale
 from mail import mail
 from .forms import LoginForm, RegisterForm, EventForm, ForgotPasswordForm, ResetPasswordForm
-from .models import User # 後續會補上
+from .models import User
+from utils.tag import EventTag
 
 supabase = None
 
@@ -81,16 +82,6 @@ def create_event():
     locale = get_locale()
     init_supabase()
 
-    # 1) 載入所有已存在的 tags 作為 choices
-    tag_rows = (
-        supabase
-          .table("tags")
-          .select("id, tag_translations(name)")
-          .eq("tag_translations.locale", locale)
-          .execute()
-          .data
-        or []
-    )
     form = EventForm()
     form.tags.choices = []
 
@@ -100,41 +91,48 @@ def create_event():
 
     if form.validate_on_submit():
         # 2) 插入新活動
-        ev = supabase.table("events").insert({
+        payload = {
             "title":       form.title.data,
             "description": form.description.data,
             "date":        form.date.data.isoformat(),
-            "created_by":  current_user.id
-        }).execute().data[0]
+            "created_by":  current_user.id,
+            "is_public":   form.is_public.data
+        }
+        # 新增時，share_token 由 DB default 生成
+        event = supabase.table("events").insert(payload).execute().data[0]
 
         # 3) 處理 tags：區分已存在 UUID 與新輸入文字
-        raw_tags = form.tags.data  # 可能包含 UUID 或新文字
-        final_ids = []
-        uuid_pattern = re.compile(
-            r'^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-' +
-            r'[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-' +
-            r'[0-9a-fA-F]{12}$'
-        )
-        for tag in raw_tags:
-            if uuid_pattern.match(tag):
-                # 已存在的 tag UUID
-                final_ids.append(tag)
-            else:
-                # 新標籤：以輸入文字當 slug，並新增翻譯
-                new_tag = supabase.table("tags") \
-                    .insert({"slug": tag}) \
-                    .execute().data[0]
-                tid = new_tag["id"]
-                # 建立中英文翻譯
-                supabase.table("tag_translations").insert([
-                    {"tag_id": tid, "locale": "en",         "name": tag},
-                    {"tag_id": tid, "locale": "zh_Hant_TW", "name": tag}
-                ]).execute()
-                final_ids.append(tid)
+
+
+        final_ids = EventTag.tag_exist_varifier(form.tags.data)
+
+        # raw_tags = form.tags.data  # 可能包含 UUID 或新文字 #
+        # final_ids = []
+        # uuid_pattern = re.compile(
+        #     r'^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-' +
+        #     r'[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-' +
+        #     r'[0-9a-fA-F]{12}$'
+        # )
+        # for tag in raw_tags:
+        #     if uuid_pattern.match(tag):
+        #         # 已存在的 tag UUID
+        #         final_ids.append(tag)
+        #     else:
+        #         # 新標籤：以輸入文字當 slug，並新增翻譯
+        #         new_tag = supabase.table("tags") \
+        #             .insert({"slug": tag}) \
+        #             .execute().data[0]
+        #         tid = new_tag["id"]
+        #         # 建立中英文翻譯
+        #         supabase.table("tag_translations").insert([
+        #             {"tag_id": tid, "locale": "en",         "name": tag},
+        #             {"tag_id": tid, "locale": "zh_Hant_TW", "name": tag}
+        #         ]).execute()
+        #         final_ids.append(tid)
 
         # 4) 建立 event_tags 關聯
         rows = [
-            {"event_id": ev["id"], "tag_id": tid}
+            {"event_id": event["id"], "tag_id": tid}
             for tid in final_ids
             if tid
         ]
@@ -142,7 +140,7 @@ def create_event():
             supabase.table("event_tags").insert(rows).execute()
 
         flash(_("Event created successfully"), "success")
-        return redirect(url_for('main.event_detail', id=ev["id"]))
+        return redirect(url_for('main.event_detail', id=event["id"]))
     return render_template("new_event.html", form=form)
 
 
@@ -151,7 +149,17 @@ def event_detail(id):
     init_supabase()
     locale = get_locale()
 
-    ev = supabase.table("events").select("*").eq("id", id).single().execute().data
+    event = supabase.table("events").select("*").eq("id", id).single().execute().data
+    if not event:
+        abort(404)
+
+    # 如果是私人活動，必須滿足「建立者本人」或「URL token」才可查看
+    if not event["is_public"]:
+        token = request.args.get('share_token', type=str)
+        if not (current_user.is_authenticated and current_user.id == event["created_by"]) \
+           and token != event["share_token"]:
+            abort(403)
+
     # 讀這個活動的標籤翻譯
     tag_rows = (
         supabase
@@ -163,12 +171,12 @@ def event_detail(id):
           .data or []
     )
     # 轉成 list of {"id":..., "name":...}
-    ev["tags"] = [
+    event["tags"] = [
        {"id": r["tag_id"], "name": r["tags"]["tag_translations"][0]["name"]}
        for r in tag_rows
     ]
 
-    return render_template("event_detail.html", event=ev)
+    return render_template("event_detail.html", event=event)
 
 @main.route('/events')
 def event_list():
@@ -231,50 +239,6 @@ def my_events():
         events=events,
         q=q
     )
-
-
-@main.route('/events/<id>/edit', methods=['GET', 'POST'])
-@login_required
-@confirmed_required
-def edit_event(id):
-    init_supabase()
-
-    # 取得活動原始資料
-    try:
-        result = supabase.table("events").select("*").eq("id", id).single().execute()
-        event = result.data
-    except BaseException as err:
-        print("edit_event_error:" + err)
-        event = None
-
-    if not event:
-        flash("Event not found.")
-        return redirect(url_for("main.my_events"))
-
-    # 檢查是否是該活動的舉辦者
-    if event["created_by"] != current_user.id:
-        flash("You are not authorized to edit this event.")
-        return redirect(url_for("main.my_events"))
-
-    from datetime import datetime
-
-    form = EventForm(data={
-        "title": event["title"],
-        "description": event["description"],
-        "date": datetime.strptime(event["date"], "%Y-%m-%dT%H:%M:%S%z")   # 去掉秒數方便表單顯示
-    })
-
-    if form.validate_on_submit():
-        supabase.table("events").update({
-            "title": form.title.data,
-            "description": form.description.data,
-            "date": form.date.data.isoformat()
-        }).eq("id", id).execute()
-
-        flash("Event updated.")
-        return redirect(url_for("main.my_events"))
-
-    return render_template("edit_event.html", form=form, event=event)
 
 
 @main.route('/events/<id>/delete', methods=['POST'])
@@ -385,6 +349,7 @@ def set_language():
 
 @main.route('/api/tags')
 def tag_search():
+    init_supabase()
     q      = request.args.get('q', '').strip()
     locale = get_locale()
     rows = supabase.rpc("search_tags", {
@@ -503,3 +468,75 @@ def reset_password(token):
         return redirect(url_for('main.login'))
 
     return render_template('reset_password.html', form=form)
+
+@main.route('/events/<id>/edit', methods=['GET', 'POST'])
+@login_required
+@confirmed_required
+def edit_event(id):
+    from datetime import datetime
+    init_supabase()
+    locale = get_locale()
+
+    # 取得活動原始資料
+    try:
+        event = supabase.table("events").select("*").eq("id", id).single().execute().data
+    except BaseException as err:
+        print("edit_event_error:" + err)
+        event = None
+
+    if not event:
+        flash("Event not found.")
+        return redirect(url_for("main.my_events"))
+
+    # 檢查是否是該活動的舉辦者
+    if event["created_by"] != current_user.id:
+        flash("You are not authorized to edit this event.")
+        return redirect(url_for("main.my_events"))
+
+    event["date"] = datetime.fromisoformat(event["date"])
+
+    bound_tags = (
+        supabase.table("event_tags")
+            .select("tag_id, tags!inner(tag_translations(name))")
+            .eq("event_id", id)
+            .eq("tags.tag_translations.locale", locale)
+            .execute().data or []
+    )
+    tag_choices = [
+        (t["tag_id"], t["tags"]["tag_translations"][0]["name"])
+        for t in bound_tags
+    ]
+    bound_ids = [c[0] for c in tag_choices]
+
+    if request.method == "POST":
+        form = EventForm(request.form)          # 這行拿到前端輸入
+    else:                                       # GET 預覽
+        form = EventForm(data=event)
+        form.tags.data = bound_ids              # 預選已綁定 tag
+
+    form.tags.choices = tag_choices
+
+    if form.validate_on_submit():
+        # --- 清掉舊關聯 ---
+        supabase.table("event_tags").delete().eq("event_id", id).execute()
+
+        # --- 將新 tag（文字）轉成 id；既有 UUID 直接用 ---
+        final_ids = EventTag.tag_exist_varifier(form.tags.data)
+
+        rows = [{"event_id": id, "tag_id": tid} for tid in final_ids]
+        if rows:
+            result = supabase.table("event_tags").insert(rows).execute()
+
+        payload = {
+            "title": form.title.data,
+            "description": form.description.data,
+            "date": form.date.data.isoformat(),
+            "is_public": form.is_public.data
+        }
+
+        supabase.table("events").update(payload).eq("id", id).execute()
+
+        flash("Event updated.")
+        return redirect(url_for("main.my_events"))
+
+    return render_template("edit_event.html", form=form, event=event)

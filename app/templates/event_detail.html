@@ -26,6 +26,15 @@
         </button>
       </form>
     </div>
+    {% if not event.is_public %}
+      <div class="alert alert-info">
+        {{ _('This is a private event.') }}<br>
+        <strong>{{ _('Share this link:') }}</strong><br>
+        <input type="text" readonly
+          value="{{ url_for('main.shared_event_detail', token=event.share_token, _external=True) }}"
+          style="width:100%; padding:.5rem; margin-top:.5rem;">
+      </div>
+    {% endif %}
   {% endif %}
 
 {% endblock %}

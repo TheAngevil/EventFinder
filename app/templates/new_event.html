@@ -33,6 +33,19 @@
     </select>
     {% if form.tags.errors %}<br><span>{{ form.tags.errors[0] }}</span>{% endif %}
   </p>
+    <div class="toggle-switch">
+      {{ form.is_public(id='is_public') }}
+      <label for="is_public" class="toggle-label"></label>
+      <span class="toggle-text"
+            data-text-public="{{ _('Public Event') }}"
+            data-text-private="{{ _('Private Event') }}">
+        {% if form.is_public.data %}
+          {{ _('Public Event') }}
+        {% else %}
+          {{ _('Private Event') }}
+        {% endif %}
+      </span>
+    </div>
     <p>
       <button type="submit">{{ _('Create Event') }}</button>
     </p>
@@ -64,4 +77,23 @@ $(function(){
   });
 });
 </script>
+
+{#Private/Public Event toggle scripts#}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const cb    = document.getElementById('is_public');
+  const label = document.querySelector('.toggle-text');
+  // 初始化文字
+  function updateText(){
+    label.textContent = cb.checked
+      ? label.dataset.textPublic
+      : label.dataset.textPrivate;
+  }
+  // 綁定切換事件
+  cb.addEventListener('change', updateText);
+  // 首次執行一次
+  updateText();
+});
+</script>
+
 {% endblock %}
