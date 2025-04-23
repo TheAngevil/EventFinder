@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-22 17:20+0800\n"
+"POT-Creation-Date: 2025-04-23 22:38+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant_TW\n"
@@ -18,55 +18,61 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: app/routes.py:28
+#: app/events.py:14 app/routes/auth_routes.py:24 app/routes/event_routes.py:24
 msgid "Please confirm your email address first."
 msgstr "請先確認您的信箱並透過點選認證信內連接"
 
-#: app/routes.py:49
+#: app/forms.py:42 app/templates/edit_event.html:43
+#: app/templates/edit_event.html:45 app/templates/new_event.html:40
+#: app/templates/new_event.html:43
+msgid "Public Event"
+msgstr "公開活動"
+
+#: app/routes/auth_routes.py:39
 msgid "Invalid credentials"
 msgstr "帳號或是密碼錯誤"
 
-#: app/routes.py:71
+#: app/routes/auth_routes.py:61
 #, python-format
 msgid "register_confirmation_information %(email)s."
 msgstr "認證信已寄到您的信箱 %(email)s."
 
-#: app/routes.py:144
-msgid "Event created successfully"
-msgstr "活動創建成功"
+#: app/routes/auth_routes.py:69
+msgid "The reset link is invalid or has expired."
+msgstr "此連接無效或已過期。"
 
-#: app/routes.py:431
-msgid "confirmation_expired"
-msgstr "認證信時效已過"
+#: app/routes/auth_routes.py:80
+msgid "Your password has been updated! Please log in."
+msgstr "您的密碼已更新! 請重新登入。"
 
-#: app/routes.py:439
-msgid "Account not found."
-msgstr "帳號不存在"
-
-#: app/routes.py:443
-msgid "Account already confirmed. Please login."
-msgstr "信箱已確認，請登入"
-
-#: app/routes.py:449
-msgid "You have confirmed your email. Thanks!"
-msgstr "謝謝您，您的信箱已認證。"
-
-#: app/routes.py:474
-msgid "A new confirmation email has been sent."
-msgstr "新的認證已經寄到您的信箱"
-
-#: app/routes.py:482
+#: app/routes/auth_routes.py:90
 #, python-format
 msgid "A password reset email has been sent to %(email)s."
 msgstr "一封密碼重置信已經發送到您的信箱 %(email)s。"
 
-#: app/routes.py:491
-msgid "The reset link is invalid or has expired."
-msgstr "此連接無效或已過期。"
+#: app/routes/auth_routes.py:100
+msgid "confirmation_expired"
+msgstr "認證信時效已過"
 
-#: app/routes.py:502
-msgid "Your password has been updated! Please log in."
-msgstr "您的密碼已更新! 請重新登入。"
+#: app/routes/auth_routes.py:108
+msgid "Account not found."
+msgstr "帳號不存在"
+
+#: app/routes/auth_routes.py:112
+msgid "Account already confirmed. Please login."
+msgstr "信箱已確認，請登入"
+
+#: app/routes/auth_routes.py:118
+msgid "You have confirmed your email. Thanks!"
+msgstr "謝謝您，您的信箱已認證。"
+
+#: app/routes/auth_routes.py:141
+msgid "A new confirmation email has been sent."
+msgstr "新的認證已經寄到您的信箱"
+
+#: app/routes/event_routes.py:78
+msgid "Event created successfully"
+msgstr "活動創建成功"
 
 #: app/templates/attendees.html:3
 #, python-format
@@ -94,13 +100,42 @@ msgstr "儲存出席狀態"
 msgid "Back to My Events"
 msgstr "回到我的活動"
 
-#: app/templates/edit_event.html:3
-msgid "edit_event_edit_event"
-msgstr "活動編輯中"
+#: app/templates/edit_event.html:4
+msgid "Edit Event"
+msgstr "編輯活動"
 
-#: app/templates/edit_event.html:13
-msgid "back to my events"
-msgstr "回到我的活動"
+#: app/templates/edit_event.html:10
+msgid "Title"
+msgstr "標題"
+
+#: app/templates/edit_event.html:16
+msgid "Description"
+msgstr "說明"
+
+#: app/templates/edit_event.html:22
+msgid "Date & Time"
+msgstr "日期與時間"
+
+#: app/templates/edit_event.html:28 app/templates/new_event.html:26
+msgid "new_event_tags_up_to_5"
+msgstr "最多五個標籤"
+
+#: app/templates/edit_event.html:44 app/templates/edit_event.html:45
+#: app/templates/new_event.html:41 app/templates/new_event.html:45
+msgid "Private Event"
+msgstr "非公開活動"
+
+#: app/templates/edit_event.html:50
+msgid "Save Changes"
+msgstr "儲存"
+
+#: app/templates/edit_event.html:52
+msgid "Cancel"
+msgstr "取消"
+
+#: app/templates/edit_event.html:73 app/templates/new_event.html:57
+msgid "Select or type to add tags"
+msgstr "搜尋想新增的標籤(最多五個標籤)"
 
 #: app/templates/event_detail.html:19 app/templates/my_events.html:33
 msgid "Edit"
@@ -114,35 +149,31 @@ msgstr "舉辦活動"
 msgid "Delete"
 msgstr "刪除"
 
-#: app/templates/event_form.html:3
-msgid "Create / Edit Event"
-msgstr "舉辦活動"
+#: app/templates/event_detail.html:31
+msgid "This is a private event."
+msgstr "這是非公開活動"
 
-#: app/templates/event_form.html:12
-msgid "event_create_edit_max_5_tags"
-msgstr "最多五個標籤"
-
-#: app/templates/event_form.html:14
-msgid "Submit"
-msgstr "提交"
+#: app/templates/event_detail.html:32
+msgid "Share this link:"
+msgstr "分享這個連接"
 
 #: app/templates/events.html:4
 msgid "Upcoming Events"
 msgstr "接下來的活動"
 
-#: app/templates/events.html:13
+#: app/templates/events.html:8
 msgid "Search by keyword..."
 msgstr "開始尋找您感興趣的活動"
 
-#: app/templates/events.html:15 app/templates/my_events.html:12
+#: app/templates/events.html:10 app/templates/my_events.html:12
 msgid "Search"
 msgstr "搜尋"
 
-#: app/templates/events.html:23
+#: app/templates/events.html:18
 msgid "Loading more events..."
 msgstr "讀取更多活動中..."
 
-#: app/templates/events.html:48
+#: app/templates/events.html:43
 msgid "View Details"
 msgstr "看更多"
 
@@ -186,7 +217,7 @@ msgstr "活動"
 msgid "My Registration Events"
 msgstr "我登記的活動"
 
-#: app/templates/layout.html:39 app/templates/new_event.html:37
+#: app/templates/layout.html:39 app/templates/new_event.html:50
 msgid "Create Event"
 msgstr "舉辦活動"
 
@@ -268,14 +299,6 @@ msgstr "說明"
 msgid "new_event_date"
 msgstr "日期"
 
-#: app/templates/new_event.html:26
-msgid "new_event_tags_up_to_5"
-msgstr "最多五個標籤"
-
-#: app/templates/new_event.html:44
-msgid "Select or type to add tags"
-msgstr "搜尋想新增的標籤(最多五個標籤)"
-
 #: app/templates/mail/reset_password.html:3 app/templates/reset_password.html:3
 msgid "Reset Your Password"
 msgstr "重置你的密碼"
@@ -286,7 +309,7 @@ msgstr "新的密碼"
 
 #: app/templates/reset_password.html:12
 msgid "Confirm Password"
-msgstr "認證信時效已過"
+msgstr "再次輸入密碼"
 
 #: app/templates/reset_password.html:16
 msgid "Reset Password"
@@ -353,17 +376,14 @@ msgid "All rights reserved."
 msgstr "保留所有權利"
 
 #: app/templates/mail/reset_password.html:8
-#, fuzzy
 msgid "Password Reset"
-msgstr "密碼"
+msgstr "重置密碼"
 
 #: app/templates/mail/reset_password.html:16
 msgid ""
 "You requested a password reset. Click the button below to choose a new "
 "password:"
-msgstr ""
-"您要求重置密碼，請點擊以下按鈕重置您的"
-"密碼:"
+msgstr "您要求重置密碼，請點擊以下按鈕重置您的密碼:"
 
 #: app/templates/mail/reset_password.html:21
 msgid "Reset My Password"
@@ -378,4 +398,19 @@ msgstr "要是您沒有要求重置密碼，請忽略此信"
 
 #~ msgid "Home"
 #~ msgstr "首頁"
+
+#~ msgid "edit_event_edit_event"
+#~ msgstr "活動編輯中"
+
+#~ msgid "back to my events"
+#~ msgstr "回到我的活動"
+
+#~ msgid "Create / Edit Event"
+#~ msgstr "舉辦活動"
+
+#~ msgid "event_create_edit_max_5_tags"
+#~ msgstr "最多五個標籤"
+
+#~ msgid "Submit"
+#~ msgstr "提交"
 

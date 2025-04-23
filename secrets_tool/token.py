@@ -10,7 +10,7 @@ class TokenTool:
         return serializer.dumps(email, salt='email-confirm-salt')
 
     @staticmethod
-    def confirm_token(token, expiration=3600):
+    def confirm_token(token, expiration=1800):
         serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
         try:
             email = serializer.loads(
@@ -28,7 +28,12 @@ class TokenTool:
         return s.dumps(email, salt='password-reset-salt')
 
     @staticmethod
-    def confirm_password_reset_token(token, expiration=3600):
+    def confirm_password_reset_token(token, expiration=1800):
+        """
+        :param token:
+        :param expiration:
+        :return:
+        """
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
         try:
             email = s.loads(token, salt='password-reset-salt', max_age=expiration)

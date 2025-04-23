@@ -31,7 +31,6 @@ class User(UserMixin):
                 return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
                             password_hash=result.data['password_hash'], email_confirmed=result.data['email_confirmed'])
         except APIError as api_err:
-            print("get_by_email_error:" + api_err.message)
             return None
 
     @staticmethod
@@ -44,7 +43,6 @@ class User(UserMixin):
                 return User(id=result.data['id'], email=result.data['email'], role=result.data['role'],
                             password_hash=result.data['password_hash'], email_confirmed=result.data['email_confirmed'])
         except APIError as err:
-            print("get_by_id_error" + err.message)
             return None
 
     @staticmethod
@@ -59,6 +57,3 @@ class User(UserMixin):
         }).execute()
         return result.data
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get_by_id(user_id)

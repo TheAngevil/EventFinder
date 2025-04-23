@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-22 17:20+0800\n"
+"POT-Creation-Date: 2025-04-23 22:38+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,55 +18,61 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.11.0\n"
 
-#: app/routes.py:28
+#: app/events.py:14 app/routes/auth_routes.py:24 app/routes/event_routes.py:24
 msgid "Please confirm your email address first."
 msgstr "Please confirm your email address first."
 
-#: app/routes.py:49
+#: app/forms.py:42 app/templates/edit_event.html:43
+#: app/templates/edit_event.html:45 app/templates/new_event.html:40
+#: app/templates/new_event.html:43
+msgid "Public Event"
+msgstr "Public Event"
+
+#: app/routes/auth_routes.py:39
 msgid "Invalid credentials"
 msgstr "Invalid credentials"
 
-#: app/routes.py:71
+#: app/routes/auth_routes.py:61
 #, python-format
 msgid "register_confirmation_information %(email)s."
 msgstr "register_confirmation_information %(email)s."
 
-#: app/routes.py:144
-msgid "Event created successfully"
-msgstr "Event created successfully"
+#: app/routes/auth_routes.py:69
+msgid "The reset link is invalid or has expired."
+msgstr "The reset link is invalid or has expired."
 
-#: app/routes.py:431
-msgid "confirmation_expired"
-msgstr "confirmation mail expired."
+#: app/routes/auth_routes.py:80
+msgid "Your password has been updated! Please log in."
+msgstr "Your password has been updated! Please log in."
 
-#: app/routes.py:439
-msgid "Account not found."
-msgstr "Account not found."
-
-#: app/routes.py:443
-msgid "Account already confirmed. Please login."
-msgstr "Account already confirmed. Please login."
-
-#: app/routes.py:449
-msgid "You have confirmed your email. Thanks!"
-msgstr "We have confirmed your email. Thanks!"
-
-#: app/routes.py:474
-msgid "A new confirmation email has been sent."
-msgstr "A new confirmation email has been sent."
-
-#: app/routes.py:482
+#: app/routes/auth_routes.py:90
 #, python-format
 msgid "A password reset email has been sent to %(email)s."
 msgstr "A password reset email has been sent to %(email)s."
 
-#: app/routes.py:491
-msgid "The reset link is invalid or has expired."
-msgstr "The reset link is invalid or has expired."
+#: app/routes/auth_routes.py:100
+msgid "confirmation_expired"
+msgstr "confirmation mail expired."
 
-#: app/routes.py:502
-msgid "Your password has been updated! Please log in."
-msgstr "Your password has been updated! Please log in."
+#: app/routes/auth_routes.py:108
+msgid "Account not found."
+msgstr "Account not found."
+
+#: app/routes/auth_routes.py:112
+msgid "Account already confirmed. Please login."
+msgstr "Account already confirmed. Please login."
+
+#: app/routes/auth_routes.py:118
+msgid "You have confirmed your email. Thanks!"
+msgstr "We have confirmed your email. Thanks!"
+
+#: app/routes/auth_routes.py:141
+msgid "A new confirmation email has been sent."
+msgstr "A new confirmation email has been sent."
+
+#: app/routes/event_routes.py:78
+msgid "Event created successfully"
+msgstr "Event created successfully"
 
 #: app/templates/attendees.html:3
 #, python-format
@@ -94,13 +100,42 @@ msgstr "Save Check-in Status"
 msgid "Back to My Events"
 msgstr "back to my event"
 
-#: app/templates/edit_event.html:3
-msgid "edit_event_edit_event"
-msgstr "Editing Event"
+#: app/templates/edit_event.html:4
+msgid "Edit Event"
+msgstr "Edit Event"
 
-#: app/templates/edit_event.html:13
-msgid "back to my events"
-msgstr "back to my event"
+#: app/templates/edit_event.html:10
+msgid "Title"
+msgstr "Title"
+
+#: app/templates/edit_event.html:16
+msgid "Description"
+msgstr "Description"
+
+#: app/templates/edit_event.html:22
+msgid "Date & Time"
+msgstr "Date & Time"
+
+#: app/templates/edit_event.html:28 app/templates/new_event.html:26
+msgid "new_event_tags_up_to_5"
+msgstr "Up to 5 tags"
+
+#: app/templates/edit_event.html:44 app/templates/edit_event.html:45
+#: app/templates/new_event.html:41 app/templates/new_event.html:45
+msgid "Private Event"
+msgstr "Private Event"
+
+#: app/templates/edit_event.html:50
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: app/templates/edit_event.html:52
+msgid "Cancel"
+msgstr "Cancel"
+
+#: app/templates/edit_event.html:73 app/templates/new_event.html:57
+msgid "Select or type to add tags"
+msgstr "Select or type to search or add tags"
 
 #: app/templates/event_detail.html:19 app/templates/my_events.html:33
 msgid "Edit"
@@ -114,51 +149,45 @@ msgstr "Create Event"
 msgid "Delete"
 msgstr "Delete"
 
-#: app/templates/event_form.html:3
-msgid "Create / Edit Event"
-msgstr "Create Event"
+#: app/templates/event_detail.html:31
+msgid "This is a private event."
+msgstr "This is a private event."
 
-#: app/templates/event_form.html:12
-msgid "event_create_edit_max_5_tags"
-msgstr "5 Tags max"
-
-#: app/templates/event_form.html:14
-msgid "Submit"
-msgstr "Submit"
+#: app/templates/event_detail.html:32
+msgid "Share this link:"
+msgstr "Share this link:"
 
 #: app/templates/events.html:4
 msgid "Upcoming Events"
 msgstr "Upcoming Events"
 
-#: app/templates/events.html:13
+#: app/templates/events.html:8
 msgid "Search by keyword..."
 msgstr "Search your event by keyword"
 
-#: app/templates/events.html:15 app/templates/my_events.html:12
+#: app/templates/events.html:10 app/templates/my_events.html:12
 msgid "Search"
 msgstr "Search"
 
-#: app/templates/events.html:23
+#: app/templates/events.html:18
 msgid "Loading more events..."
 msgstr "Loading more events..."
 
-#: app/templates/events.html:48
+#: app/templates/events.html:43
 msgid "View Details"
 msgstr "view details"
 
 #: app/templates/forgot_password.html:3
-#, fuzzy
 msgid "Forgot Password"
-msgstr "Password"
+msgstr "Forgot Password"
 
 #: app/templates/forgot_password.html:11
 msgid "Send Reset Email"
 msgstr "Send Reset Email"
 
 #: app/templates/forgot_password.html:13
-#, fuzzy
 msgid "Back to Login"
-msgstr "back to my event"
+msgstr "Back to Login"
 
 #: app/templates/layout.html:7
 msgid "Activity MVP"
@@ -188,7 +217,7 @@ msgstr "Events"
 msgid "My Registration Events"
 msgstr "My Registration Events"
 
-#: app/templates/layout.html:39 app/templates/new_event.html:37
+#: app/templates/layout.html:39 app/templates/new_event.html:50
 msgid "Create Event"
 msgstr "Create Event"
 
@@ -228,12 +257,11 @@ msgstr "Forgot Password?"
 
 #: app/templates/my_events.html:3
 msgid "My Created Events"
-msgstr "My created event"
+msgstr "My Created Event"
 
 #: app/templates/my_events.html:9
-#, fuzzy
 msgid "Search my events..."
-msgstr "back to my event"
+msgstr "Search my events..."
 
 #: app/templates/my_events.html:18
 msgid "Create New Event"
@@ -241,7 +269,7 @@ msgstr "Create New Event"
 
 #: app/templates/my_events.html:47
 msgid "View Attendees"
-msgstr "view attendees"
+msgstr "View Attendees"
 
 #: app/templates/my_events.html:54
 msgid "You have not created any events yet."
@@ -249,11 +277,11 @@ msgstr "You have not created event yet"
 
 #: app/templates/my_registrations.html:3
 msgid "my registered events"
-msgstr "Registered At"
+msgstr "My Registered Events"
 
 #: app/templates/my_registrations.html:15
 msgid "no registered events"
-msgstr "Registered At"
+msgstr "No Registered events"
 
 #: app/templates/new_event.html:3
 msgid "new_event_heading"
@@ -271,14 +299,6 @@ msgstr "Description"
 msgid "new_event_date"
 msgstr "Date"
 
-#: app/templates/new_event.html:26
-msgid "new_event_tags_up_to_5"
-msgstr "Up to 5 tags"
-
-#: app/templates/new_event.html:44
-msgid "Select or type to add tags"
-msgstr "Select or type to search or add tags"
-
 #: app/templates/mail/reset_password.html:3 app/templates/reset_password.html:3
 msgid "Reset Your Password"
 msgstr "Reset Your Password"
@@ -292,7 +312,6 @@ msgid "Confirm Password"
 msgstr "Confirm Password."
 
 #: app/templates/reset_password.html:16
-#, fuzzy
 msgid "Reset Password"
 msgstr "Password Reset"
 
@@ -380,10 +399,24 @@ msgstr "Reset My Password"
 msgid "If you did not request this, simply ignore this email."
 msgstr "If you did not request this, simply ignore this email."
 
-
 #~ msgid "No events found."
 #~ msgstr "Event not found"
 
 #~ msgid "Home"
 #~ msgstr "Home"
+
+#~ msgid "edit_event_edit_event"
+#~ msgstr "Editing Event"
+
+#~ msgid "back to my events"
+#~ msgstr "back to my event"
+
+#~ msgid "Create / Edit Event"
+#~ msgstr "Create Event"
+
+#~ msgid "event_create_edit_max_5_tags"
+#~ msgstr "5 Tags max"
+
+#~ msgid "Submit"
+#~ msgstr "Submit"
 

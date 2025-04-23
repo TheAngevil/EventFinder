@@ -1,26 +1,15 @@
 from functools import wraps
-import re
 
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session, jsonify, abort
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import render_template, redirect, url_for, request, flash, session, jsonify, abort
+from flask_login import login_required, current_user
 from flask_babel import _
 from postgrest import APIError
-from werkzeug.security import check_password_hash, generate_password_hash
-from supabase import create_client
 
-from secrets_tool.token import TokenTool
-from . import get_locale
-from mail import mail
-from .forms import LoginForm, RegisterForm, EventForm, ForgotPasswordForm, ResetPasswordForm
-from .models import User
+from app import get_locale
+from app.forms import EventForm
+from app.supabase_helper import get_supabase
 from utils.tag import EventTag
-
-supabase = None
-
-def init_supabase():
-    global supabase
-    if supabase is None:
-        supabase = create_client(current_app.config['SUPABASE_URL'], current_app.config['SUPABASE_KEY'])
+from . import main
 
 def confirmed_required(f):
     @wraps(f)
@@ -31,56 +20,19 @@ def confirmed_required(f):
         return f(*args, **kwargs)
     return decorated
 
-main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
     return redirect(url_for('main.event_list'))  # 暫時首頁為活動頁
 
-@main.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.get_by_email(form.email.data)
-        if user and check_password_hash(user.password_hash, form.password.data):
-            login_user(user)
-            if not user.email_confirmed:
-                return redirect(url_for('main.unconfirmed'))
-            return redirect(url_for('main.index'))
-        flash(_('Invalid credentials'), 'danger')
-    return render_template('login.html', form=form)
-
-@main.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('main.index'))
-
-@main.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-
-    if form.validate_on_submit():
-        from .models import User
-        user_exists = User.get_by_email(form.email.data)
-        if user_exists:
-            flash('Email already registered.')
-        else:
-            mail_address = form.email.data
-            User.create(email=form.email.data, password=form.password.data)
-            mail.send_confirmation_email(mail_address)
-            flash(_("register_confirmation_information %(email)s.", email=mail_address), "info")
-            return redirect(url_for('main.login'))
-    return render_template('register.html', form=form)
 
 @main.route('/events/new', methods=['GET', 'POST'])
 @login_required
 @confirmed_required
 def create_event():
-    from .forms import EventForm
+    from app.forms import EventForm
 
-    locale = get_locale()
-    init_supabase()
+    supabase = get_supabase()
 
     form = EventForm()
     form.tags.choices = []
@@ -102,33 +54,7 @@ def create_event():
         event = supabase.table("events").insert(payload).execute().data[0]
 
         # 3) 處理 tags：區分已存在 UUID 與新輸入文字
-
-
         final_ids = EventTag.tag_exist_varifier(form.tags.data)
-
-        # raw_tags = form.tags.data  # 可能包含 UUID 或新文字 #
-        # final_ids = []
-        # uuid_pattern = re.compile(
-        #     r'^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-' +
-        #     r'[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-' +
-        #     r'[0-9a-fA-F]{12}$'
-        # )
-        # for tag in raw_tags:
-        #     if uuid_pattern.match(tag):
-        #         # 已存在的 tag UUID
-        #         final_ids.append(tag)
-        #     else:
-        #         # 新標籤：以輸入文字當 slug，並新增翻譯
-        #         new_tag = supabase.table("tags") \
-        #             .insert({"slug": tag}) \
-        #             .execute().data[0]
-        #         tid = new_tag["id"]
-        #         # 建立中英文翻譯
-        #         supabase.table("tag_translations").insert([
-        #             {"tag_id": tid, "locale": "en",         "name": tag},
-        #             {"tag_id": tid, "locale": "zh_Hant_TW", "name": tag}
-        #         ]).execute()
-        #         final_ids.append(tid)
 
         # 4) 建立 event_tags 關聯
         rows = [
@@ -146,7 +72,7 @@ def create_event():
 
 @main.route('/events/<id>')
 def event_detail(id):
-    init_supabase()
+    supabase = get_supabase()
     locale = get_locale()
 
     event = supabase.table("events").select("*").eq("id", id).single().execute().data
@@ -192,7 +118,7 @@ def event_list():
 @login_required
 @confirmed_required
 def my_registrations():
-    init_supabase()
+    supabase = get_supabase()
     # 取得使用者報名過的 event_id
     try:
         reg_result = supabase.table("registrations") \
@@ -217,7 +143,7 @@ def my_registrations():
 @confirmed_required
 def my_events():
     q = request.args.get('q', '').strip()
-    init_supabase()
+    supabase = get_supabase()
 
     # 1) 撈出目前使用者建立的活動，並可用關鍵字過濾 title
     query = (supabase.table("events")
@@ -245,7 +171,7 @@ def my_events():
 @login_required
 @confirmed_required
 def delete_event(id):
-    init_supabase()
+    supabase = get_supabase()
 
     # 取得活動資料
     try:
@@ -277,7 +203,7 @@ def delete_event(id):
 @login_required
 @confirmed_required
 def view_attendees(id):
-    init_supabase()
+    supabase = get_supabase()
 
     # 取得該活動資料
     try:
@@ -305,7 +231,7 @@ def view_attendees(id):
 @login_required
 @confirmed_required
 def update_checkin(event_id):
-    init_supabase()
+    supabase = get_supabase()
 
     if not current_user.is_authenticated:
         flash("Login required.")
@@ -349,7 +275,7 @@ def set_language():
 
 @main.route('/api/tags')
 def tag_search():
-    init_supabase()
+    supabase = get_supabase()
     q      = request.args.get('q', '').strip()
     locale = get_locale()
     rows = supabase.rpc("search_tags", {
@@ -371,7 +297,7 @@ def api_events():
     except ValueError:
         p_limit, p_offset = 9, 0
 
-    init_supabase()
+    supabase = get_supabase()
     events = []
     try:
         events = supabase.rpc("search_events", {
@@ -386,95 +312,12 @@ def api_events():
     finally:
         return jsonify(events)
 
-
-@main.route('/confirm/<token>')
-def confirm_email(token):
-    from secrets_tool.token import TokenTool
-    from datetime import datetime, timezone
-    email = TokenTool.confirm_token(token)
-    if not email:
-        flash(_('confirmation_expired'), 'danger')
-        return redirect(url_for('main.login'))
-
-    # 取得 user，並標記已驗證
-    try:
-        init_supabase()
-        user = supabase.table("users").select("*").eq("email", email).single().execute().data
-        if not user:
-            flash(_('Account not found.'), 'warning')
-            return redirect(url_for('main.register'))
-
-        if user.get('email_confirmed'):
-            flash(_('Account already confirmed. Please login.'), 'success')
-        else:
-            supabase.table("users").update({
-                "email_confirmed": True,
-                "email_confirmed_at": datetime.now(timezone.utc).isoformat()
-            }).eq("email", email).execute()
-            flash(_('You have confirmed your email. Thanks!'), 'success')
-    except APIError as error:
-        print("confirm_email_error: " + error.message)
-
-    return redirect(url_for('main.login'))
-
-
-@main.route('/unconfirmed')
-@login_required
-def unconfirmed():
-    # 已驗證者不應進來
-    if current_user.email_confirmed:
-        return redirect(url_for('main.index'))
-    return render_template('unconfirmed.html')
-
-
-@main.route('/resend-confirmation')
-@login_required
-def resend_confirmation():
-    # 已驗證者不必重寄
-    if current_user.email_confirmed:
-        return redirect(url_for('main.index'))
-
-    # 寄出確認信
-    mail.send_confirmation_email(current_user.email)
-    flash(_('A new confirmation email has been sent.'), 'success')
-    return redirect(url_for('main.unconfirmed'))
-
-@main.route('/forgot-password', methods=['GET','POST'])
-def forgot_password():
-    form = ForgotPasswordForm()
-    if form.validate_on_submit():
-        mail.send_password_reset_email(form.email.data)
-        flash(_('A password reset email has been sent to %(email)s.', email=form.email.data), 'info')
-        return redirect(url_for('main.login'))
-    return render_template('forgot_password.html', form=form)
-
-
-@main.route('/reset-password/<token>', methods=['GET','POST'])
-def reset_password(token):
-    email = TokenTool.confirm_password_reset_token(token)
-    if not email:
-        flash(_('The reset link is invalid or has expired.'), 'danger')
-        return redirect(url_for('main.forgot_password'))
-
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        init_supabase()
-        pw_hash = generate_password_hash(form.password.data)
-        supabase.table("users") \
-            .update({"password_hash": pw_hash}) \
-            .eq("email", email) \
-            .execute()
-        flash(_('Your password has been updated! Please log in.'), 'success')
-        return redirect(url_for('main.login'))
-
-    return render_template('reset_password.html', form=form)
-
 @main.route('/events/<id>/edit', methods=['GET', 'POST'])
 @login_required
 @confirmed_required
 def edit_event(id):
     from datetime import datetime
-    init_supabase()
+    supabase = get_supabase()
     locale = get_locale()
 
     # 取得活動原始資料
@@ -537,13 +380,13 @@ def edit_event(id):
         supabase.table("events").update(payload).eq("id", id).execute()
 
         flash("Event updated.")
-        return redirect(url_for("main.my_events"))
+        return redirect(url_for("main.event_detail", id=id))
 
     return render_template("edit_event.html", form=form, event=event)
 
 @main.route('/events/share/<uuid:token>')
 def shared_event_detail(token):
-    init_supabase()
+    supabase = get_supabase()
     event = (
       supabase.table("events")
         .select("*")
