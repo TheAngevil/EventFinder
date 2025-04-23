@@ -540,3 +540,18 @@ def edit_event(id):
         return redirect(url_for("main.my_events"))
 
     return render_template("edit_event.html", form=form, event=event)
+
+@main.route('/events/share/<uuid:token>')
+def shared_event_detail(token):
+    init_supabase()
+    event = (
+      supabase.table("events")
+        .select("*")
+        .eq("share_token", str(token))
+        .single()
+        .execute().data
+    )
+    if not event:
+        abort(404)
+    # 讀取 tags、attendees…如同 detail route
+    return render_template('event_detail.html', event=event)

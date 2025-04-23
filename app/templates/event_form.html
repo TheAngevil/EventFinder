@@ -1,47 +1,47 @@
-{% extends "layout.html" %}
-{% block content %}
-<h2>{{ _('Create / Edit Event') }}</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <p>{{ form.title.label }}<br>{{ form.title() }}</p>
-  <p>{{ form.description.label }}<br>{{ form.description() }}</p>
-  <p>{{ form.date.label }}<br>{{ form.date() }}</p>
-  <p>
-    {{ form.tags.label }}<br>
-    {{ form.tags(size=5, multiple=true) }}
-    <small>{{ _('event_create_edit_max_5_tags') }}</small>
-  </p>
-    <div class="toggle-switch">
-      {{ form.is_public(id='is_public') }}
-      <label for="is_public" class="toggle-label"></label>
-      <span class="toggle-text"
-            data-text-public="{{ _('Public Event') }}"
-            data-text-private="{{ _('Private Event') }}">
-        {% if form.is_public.data %}
-          {{ _('Public Event') }}
-        {% else %}
-          {{ _('Private Event') }}
-        {% endif %}
-      </span>
-    </div>
-  <p><button type="submit">{{ _('Submit') }}</button></p>
-</form>
-
+{#{% extends "layout.html" %}#}
+{#{% block content %}#}
+{#<h2>{{ _('Create / Edit Event') }}</h2>#}
+{#<form method="POST">#}
+{#  {{ form.hidden_tag() }}#}
+{#  <p>{{ form.title.label }}<br>{{ form.title() }}</p>#}
+{#  <p>{{ form.description.label }}<br>{{ form.description() }}</p>#}
+{#  <p>{{ form.date.label }}<br>{{ form.date() }}</p>#}
+{#  <p>#}
+{#    {{ form.tags.label }}<br>#}
+{#    {{ form.tags(size=5, multiple=true) }}#}
+{#    <small>{{ _('event_create_edit_max_5_tags') }}</small>#}
+{#  </p>#}
+{#    <div class="toggle-switch">#}
+{#      {{ form.is_public(id='is_public') }}#}
+{#      <label for="is_public" class="toggle-label"></label>#}
+{#      <span class="toggle-text"#}
+{#            data-text-public="{{ _('Public Event') }}"#}
+{#            data-text-private="{{ _('Private Event') }}">#}
+{#        {% if form.is_public.data %}#}
+{#          {{ _('Public Event') }}#}
+{#        {% else %}#}
+{#          {{ _('Private Event') }}#}
+{#        {% endif %}#}
+{#      </span>#}
+{#    </div>#}
+{#  <p><button type="submit">{{ _('Submit') }}</button></p>#}
+{#</form>#}
+{##}
 {#Private/Public Event toggle scripts#}
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  const cb    = document.getElementById('is_public');
-  const label = document.querySelector('.toggle-text');
-  // 初始化文字
-  function updateText(){
-    label.textContent = cb.checked
-      ? label.dataset.textPublic
-      : label.dataset.textPrivate;
-  }
-  // 綁定切換事件
-  cb.addEventListener('change', updateText);
-  // 首次執行一次
-  updateText();
-});
-</script>
-{% endblock %}
+{#<script>#}
+{#document.addEventListener('DOMContentLoaded', function(){#}
+{#  const cb    = document.getElementById('is_public');#}
+{#  const label = document.querySelector('.toggle-text');#}
+{#  // 初始化文字#}
+{#  function updateText(){#}
+{#    label.textContent = cb.checked#}
+{#      ? label.dataset.textPublic#}
+{#      : label.dataset.textPrivate;#}
+{#  }#}
+{#  // 綁定切換事件#}
+{#  cb.addEventListener('change', updateText);#}
+{#  // 首次執行一次#}
+{#  updateText();#}
+{#});#}
+{#</script>#}
+{#{% endblock %}#}
