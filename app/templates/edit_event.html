@@ -46,6 +46,17 @@
       </span>
     </div>
 
+    {% if form_fields %}
+      <h3>{{ _('Registration Form (read-only)') }}</h3>
+      <ul>
+        {% for f in form_fields %}
+          <li>{{ loop.index }}. {{ f.label }} – {{ f.kind }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p><em>{{ _('No registration form defined for this event.') }}</em></p>
+    {% endif %}
+
     <div class="form-buttons">
       <button type="submit" class="btn btn-primary">{{ _('Save Changes') }}</button>
       <a href="{{ url_for('main.event_detail', id=event.id) }}" class="btn btn-secondary">

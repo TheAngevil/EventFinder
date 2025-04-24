@@ -274,3 +274,9 @@ button:hover,input[type="submit"]:hover{
 /* 讓 form buttons 一排顯示並留間距 */
 .form-buttons { display:flex; gap:1rem; }
 
+/* ----------- Form Builder 專用 ----------- */
+.builder-list      { list-style:none; padding:0; margin:1rem 0;}
+.builder-item      { display:flex; gap:.5rem; align-items:center; margin:.6rem 0;}
+.drag-handle       { cursor:grab; }
+.builder-item input{ flex:1; padding:.3rem; border:1px solid #ccc; border-radius:6px; }
+.builder-actions button{ margin-right:.5rem; }

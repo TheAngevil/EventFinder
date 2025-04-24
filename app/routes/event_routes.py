@@ -66,9 +66,26 @@ def create_event():
             supabase.table("event_tags").insert(rows).execute()
 
         flash(_("Event created successfully"), "success")
-        return redirect(url_for('main.event_detail', id=event["id"]))
+        return redirect(url_for('main.form_builder', id=event["id"]))
     return render_template("new_event.html", form=form)
 
+@main.route('/events/<id>/builder', methods=['GET','POST'])
+@login_required
+def form_builder(id):
+    supabase = get_supabase()
+    if request.method == 'POST':
+        data = request.json['fields']
+        # --- server-side limits ---
+        if (sum(1 for f in data if f['kind']=='short')>10 or
+            sum(1 for f in data if f['kind']=='boolean')>10 or
+            sum(1 for f in data if f['kind']=='long')>2):
+            abort(400)
+        supabase.table('event_forms').insert({'event_id':id}).execute()
+        rows=[{'event_id':id,'order_idx':i,'kind':f['kind'],'label':f['label'][:30]}
+              for i,f in enumerate(data)]
+        if rows: supabase.table('event_form_fields').insert(rows).execute()
+        return {'ok':True}
+    return render_template('form_builder.html')
 
 @main.route('/events/<id>')
 def event_detail(id):
@@ -381,8 +398,9 @@ def edit_event(id):
 
         flash("Event updated.")
         return redirect(url_for("main.event_detail", id=id))
-
-    return render_template("edit_event.html", form=form, event=event)
+    form_fields = supabase.table('event_form_fields').select('*').eq('event_id', id) \
+        .order('order_idx').execute().data
+    return render_template("edit_event.html", form=form, event=event, form_fields=form_fields)
 
 @main.route('/events/share/<uuid:token>')
 def shared_event_detail(token):

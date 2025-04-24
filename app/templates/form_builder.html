@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ _('Define Registration Form') }}</h2>
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+{# ①  在 x-data 區塊加 x-init="initDrag()" —— Alpine 完成後才叫拖曳初始化 #}
+<div  x-data="builder({{ fields_json | default([]) | tojson }})"
+      x-init="initDrag()"
+      class="builder">
+
+  <ul id="fieldList" class="builder-list">
+    <template x-for="(f, idx) in fields" :key="idx">
+      <li class="builder-item">
+        <span class="drag-handle">☰</span>
+
+        <input  x-model="f.label"
+                maxlength="30"
+                :placeholder="i18n.label"
+                required />
+
+        <select x-model="f.kind">
+          <option value="short">   {{ _('Short') }}</option>
+          <option value="boolean"> {{ _('Yes/No') }}</option>
+          <option value="long">    {{ _('Long') }}</option>
+        </select>
+
+        <button type="button" @click="remove(idx)">✕</button>
+      </li>
+    </template>
+  </ul>
+
+  <div class="builder-actions">
+    <button type="button" @click="add('short')"   :disabled="count('short')>=10">{{ _('Add Short') }}</button>
+    <button type="button" @click="add('boolean')" :disabled="count('boolean')>=10">{{ _('Add Yes/No') }}</button>
+    <button type="button" @click="add('long')"    :disabled="count('long')>=2">{{ _('Add Long') }}</button>
+  </div>
+
+  <button type="button" class="btn btn-primary" @click="save">
+    {{ _('Save Template & Finish') }}
+  </button>
+</div>
+
+{# ②  先載入 Sortable，再載 Alpine（defer）#}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<script>
+
+function builder(initialFields){
+  return {
+    /* ---------- 狀態 ---------- */
+    fields: initialFields || [],
+    i18n  : { label: "{{ _('Label') }}" },
+
+    /* ---------- 方法 ---------- */
+    add(kind){ this.fields.push({ label:'', kind }) },
+    remove(i){ this.fields.splice(i, 1) },
+    count(k){ return this.fields.filter(f => f.kind === k).length },
+
+    save(){
+      fetch(location.pathname, {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken' : document.querySelector('meta[name="csrf-token"]').content
+        },
+        body   : JSON.stringify({ fields: this.fields })
+      }).then(r => r.ok
+          ? window.location.href = '/events/' + location.pathname.split('/')[2]
+          : r.json().then(e => alert(e.error || 'Save failed')))
+       .catch(() => alert('Network error'));
+    },
+
+    /* ③  拖曳初始化：用 window.Sortable，保證物件已存在 */
+    initDrag(){
+      new window.Sortable(document.getElementById('fieldList'), {
+        animation:150,
+        handle   : '.drag-handle',
+        onEnd    : e => {
+          const moved = this.fields.splice(e.oldIndex, 1)[0];
+          this.fields.splice(e.newIndex, 0, moved);
+        }
+      });
+    }
+  }
+}
+</script>
+{% endblock %}
