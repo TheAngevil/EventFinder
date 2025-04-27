@@ -1,14 +1,36 @@
+<!-- ➊ flatpickr 樣式 -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 {% extends "layout.html" %}
 {% block content %}
 
   <h2>{{ _('Upcoming Events') }}</h2>
   {# —— 搜尋表單 —— #}
-  <form id="searchForm" class="search-form">
-    <input type="text" name="q"
-           placeholder="{{ _('Search by keyword...') }}"
-           value="{{ q or '' }}" />
-    <button type="submit">{{ _('Search') }}</button>
-  </form>
+<form id="searchForm" class="search-form">
+  <input type="text"  name="q"
+         placeholder="{{ _('Search by keyword...') }}"
+         value="{{ q or '' }}">
+  <!-- Advanced-toggle -->
+  <label style="display:flex;align-items:center;gap:4px">
+    <input type="checkbox" id="toggleAdv">
+    {{ _('Advanced search') }}
+  </label>
+  <button type="submit">{{ _('Search') }}</button>
+
+  <!-- 清空日期 -->
+  <button type="button" id="clearDates" style="display:none">
+    {{ _('Clear dates') }}
+  </button>
+
+  <!-- ⇩ 日曆只有勾選 adv 才顯示 -->
+  <div id="advBox" style="display:none; width:100%; margin-top:.6rem">
+    <input id="dateRange"
+           name="daterange"
+           class="form-input"
+           placeholder="{{ _('Pick 1-90 days in next 4 months') }}">
+  </div>
+</form>
 
   {# —— 空的活動容器 —— #}
   <div id="eventGrid" class="event-grid"></div>
@@ -21,75 +43,39 @@
   <br>
 
   {# —— Infinite Scroll Script —— #}
-  <script>
-  (function(){
-    const grid     = document.getElementById('eventGrid');
-    const loader   = document.getElementById('loading');
-    const form     = document.getElementById('searchForm');
-    let offset     = 0;
-    const isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
-    const limit    = isMobile ? 5 : 9;
-    let loading    = false;
-    let done       = false;
+{#  <script>#}
+  {#/* ---------- Advanced search toggle ---------- */#}
+  {#  const advToggle = document.getElementById('toggleAdv');#}
+  {#  const advBox    = document.getElementById('advBox');#}
+  {#  advToggle.addEventListener('change', () => {#}
+  {#    advBox.style.display = advToggle.checked ? 'block' : 'none';#}
+  {#  });#}
+{##}
+    {#/* ---------- flatpickr init ---------- */#}
+    {#let range = null;   // 之後讀取 start / end#}
+    {#flatpickr('#dateRange', {#}
+    {#  mode: 'range',#}
+    {#  dateFormat: 'Y-m-d',#}
+    {#  minDate: 'today',#}
+    {#  maxDate: new Date().fp_incr(120),      // 未來 4 個月 ≈ 120 天#}
+    {#  locale: '{{ get_locale() }}',          // 跟隨當前語系#}
+    {#  onChange(sel){#}
+    {#    range = sel;                         // sel = [Date, Date?]#}
+    {#  }});#}
+{##}
+{#  </script>#}
+{% set fp_locale = 'zh-tw' if get_locale().startswith('zh') else 'en' %}
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+{# 若非英語，再載入 l10n #}
+{% if fp_locale != 'en' %}
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/{{ fp_locale }}.js"></script>
+{% endif %}
 
-    function buildCard(e){
-      const tags = (e.tags||[]).map(t=>`<span class="tag">#${t.name}</span>`).join(' ');
-      return `
-      <div class="event-card">
-        <h3>${e.title}</h3>
-        <p class="date">📅 ${e.date.slice(0,10)} ${e.date.slice(11,16)}</p>
-        <p>${e.description.slice(0,100)}…</p>
-        <div class="tags">${tags}</div>
-        <a class="btn" href="/events/${e.id}">{{ _('View Details') }}</a>
-      </div>`;
-    }
+<script>
+  window.FP_LOCALE = "{{ fp_locale }}";
 
-    async function fetchEvents(reset=false){
-        console.log('[fetchEvents called]', { reset, offset, limit, loading, done });
+  window.TEXT_VIEW_DETAILS = "{{ _('View Details') }}";
+</script>
 
-        if(reset){
-        offset = 0;
-        done   = false;
-        grid.innerHTML = '';
-      }
-
-      if(loading||done) return;
-      loading = true;
-      loader.style.display = 'block';
-
-      const params = new URLSearchParams(new FormData(form));
-      params.set('limit',  limit);
-      params.set('offset', offset);
-
-        console.log('[calling api]', '/api/events?' + params);
-      const res  = await fetch('/api/events?' + params);
-        console.log('[api status]', res.status);
-      const data = await res.json();
-        console.log('[api data length]', data.length, data);
-      if(data.length < limit) done = true;
-
-      data.forEach(e => grid.insertAdjacentHTML('beforeend', buildCard(e)));
-      offset += data.length;
-      loading = false;
-      loader.style.display = 'none';
-    }
-
-    // 初次載入
-    fetchEvents();
-
-    // 搜尋時重置並重拉
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      fetchEvents(true);
-    });
-
-    // 滾動到底部自動載更多
-    window.addEventListener('scroll', () => {
-      if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 300){
-        fetchEvents();
-      }
-    });
-  })();
-  </script>
-
+<script defer src="{{ url_for('static', filename='events.js') }}"></script>
 {% endblock %}

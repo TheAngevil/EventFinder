@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-23 22:38+0800\n"
+"POT-Creation-Date: 2025-04-27 13:17+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant_TW\n"
@@ -16,87 +16,112 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.11.0\n"
+"Generated-By: Babel 2.17.0\n"
 
-#: app/events.py:14 app/routes/auth_routes.py:24 app/routes/event_routes.py:24
+#: app/deprecating_events.py:14 app/routes/auth_routes.py:20
+#: app/routes/event_routes.py:18
 msgid "Please confirm your email address first."
 msgstr "請先確認您的信箱並透過點選認證信內連接"
 
 #: app/forms.py:42 app/templates/edit_event.html:43
 #: app/templates/edit_event.html:45 app/templates/new_event.html:40
-#: app/templates/new_event.html:43
+#: app/templates/new_event.html:43 app/templates/new_event_with_form.html:37
 msgid "Public Event"
 msgstr "公開活動"
 
-#: app/routes/auth_routes.py:39
+#: app/routes/auth_routes.py:35
 msgid "Invalid credentials"
 msgstr "帳號或是密碼錯誤"
 
-#: app/routes/auth_routes.py:61
+#: app/routes/auth_routes.py:57
 #, python-format
 msgid "register_confirmation_information %(email)s."
 msgstr "認證信已寄到您的信箱 %(email)s."
 
-#: app/routes/auth_routes.py:69
+#: app/routes/auth_routes.py:65
 msgid "The reset link is invalid or has expired."
 msgstr "此連接無效或已過期。"
 
-#: app/routes/auth_routes.py:80
+#: app/routes/auth_routes.py:76
 msgid "Your password has been updated! Please log in."
 msgstr "您的密碼已更新! 請重新登入。"
 
-#: app/routes/auth_routes.py:90
+#: app/routes/auth_routes.py:86
 #, python-format
 msgid "A password reset email has been sent to %(email)s."
 msgstr "一封密碼重置信已經發送到您的信箱 %(email)s。"
 
-#: app/routes/auth_routes.py:100
+#: app/routes/auth_routes.py:96
 msgid "confirmation_expired"
 msgstr "認證信時效已過"
 
-#: app/routes/auth_routes.py:108
+#: app/routes/auth_routes.py:104
 msgid "Account not found."
 msgstr "帳號不存在"
 
-#: app/routes/auth_routes.py:112
+#: app/routes/auth_routes.py:108
 msgid "Account already confirmed. Please login."
 msgstr "信箱已確認，請登入"
 
-#: app/routes/auth_routes.py:118
+#: app/routes/auth_routes.py:114
 msgid "You have confirmed your email. Thanks!"
 msgstr "謝謝您，您的信箱已認證。"
 
-#: app/routes/auth_routes.py:141
+#: app/routes/auth_routes.py:137
 msgid "A new confirmation email has been sent."
 msgstr "新的認證已經寄到您的信箱"
 
-#: app/routes/event_routes.py:78
-msgid "Event created successfully"
-msgstr "活動創建成功"
+#: app/routes/event_routes.py:508
+msgid "Registration successful!"
+msgstr "活動登記成功"
+
+#: app/routes/event_routes.py:526
+msgid "Check-in list is locked (24 h after event)."
+msgstr "登記表單已鎖定(活動時間24小時後)"
+
+#: app/routes/event_routes.py:546
+msgid "Saved."
+msgstr "已儲存"
 
 #: app/templates/attendees.html:3
 #, python-format
-msgid "Attendees for \"%(title)s\""
-msgstr "\"%(title)s\" 的出席者名單"
+msgid "Attendees for \"%(t)s\""
+msgstr "\"%(t)s\" 的出席者名單"
 
-#: app/templates/attendees.html:9 app/templates/forgot_password.html:7
+#: app/templates/attendees.html:13
+msgid "Registered"
+msgstr "已登記"
+
+#: app/templates/attendees.html:14
+msgid "Checked-in"
+msgstr "出席確認"
+
+#: app/templates/attendees.html:21 app/templates/forgot_password.html:7
 #: app/templates/login.html:7 app/templates/register.html:7
 msgid "Email"
 msgstr "電子信箱"
 
-#: app/templates/attendees.html:10
+#: app/templates/attendees.html:22
 msgid "Registered At"
 msgstr "註冊"
 
-#: app/templates/attendees.html:11
+#: app/templates/attendees.html:26
 msgid "Checked In"
 msgstr "確認出席"
 
-#: app/templates/attendees.html:31
+#: app/templates/attendees.html:47
+msgid "Yes"
+msgstr "是"
+
+#: app/templates/attendees.html:47
+msgid "No"
+msgstr "否"
+
+#: app/templates/attendees.html:73
 msgid "Save Check-in Status"
 msgstr "儲存出席狀態"
 
-#: app/templates/attendees.html:36
+#: app/templates/attendees.html:79
 msgid "Back to My Events"
 msgstr "回到我的活動"
 
@@ -104,15 +129,15 @@ msgstr "回到我的活動"
 msgid "Edit Event"
 msgstr "編輯活動"
 
-#: app/templates/edit_event.html:10
+#: app/templates/edit_event.html:10 app/templates/new_event_with_form.html:18
 msgid "Title"
 msgstr "標題"
 
-#: app/templates/edit_event.html:16
+#: app/templates/edit_event.html:16 app/templates/new_event_with_form.html:23
 msgid "Description"
 msgstr "說明"
 
-#: app/templates/edit_event.html:22
+#: app/templates/edit_event.html:22 app/templates/new_event_with_form.html:28
 msgid "Date & Time"
 msgstr "日期與時間"
 
@@ -122,18 +147,27 @@ msgstr "最多五個標籤"
 
 #: app/templates/edit_event.html:44 app/templates/edit_event.html:45
 #: app/templates/new_event.html:41 app/templates/new_event.html:45
+#: app/templates/new_event_with_form.html:37
 msgid "Private Event"
 msgstr "非公開活動"
 
 #: app/templates/edit_event.html:50
+msgid "Registration Form (read-only)"
+msgstr "報名表單(唯讀)"
+
+#: app/templates/edit_event.html:57
+msgid "No registration form defined for this event."
+msgstr "此活動沒有報名表單"
+
+#: app/templates/edit_event.html:61
 msgid "Save Changes"
 msgstr "儲存"
 
-#: app/templates/edit_event.html:52
+#: app/templates/edit_event.html:63
 msgid "Cancel"
 msgstr "取消"
 
-#: app/templates/edit_event.html:73 app/templates/new_event.html:57
+#: app/templates/edit_event.html:84 app/templates/new_event.html:57
 msgid "Select or type to add tags"
 msgstr "搜尋想新增的標籤(最多五個標籤)"
 
@@ -157,23 +191,40 @@ msgstr "這是非公開活動"
 msgid "Share this link:"
 msgstr "分享這個連接"
 
-#: app/templates/events.html:4
+#: app/templates/event_detail.html:42 app/templates/layout.html:44
+#: app/templates/register.html:3 app/templates/register.html:17
+msgid "Register"
+msgstr "註冊"
+
+#: app/templates/events.html:8
 msgid "Upcoming Events"
 msgstr "接下來的活動"
 
-#: app/templates/events.html:8
+#: app/templates/events.html:12
 msgid "Search by keyword..."
 msgstr "開始尋找您感興趣的活動"
 
-#: app/templates/events.html:10 app/templates/my_events.html:12
+#: app/templates/events.html:17
+msgid "Advanced search"
+msgstr "進階搜尋"
+
+#: app/templates/events.html:19 app/templates/my_events.html:12
 msgid "Search"
 msgstr "搜尋"
 
-#: app/templates/events.html:18
+#: app/templates/events.html:23
+msgid "Clear dates"
+msgstr "清除日期搜尋"
+
+#: app/templates/events.html:31
+msgid "Pick 1-90 days in next 4 months"
+msgstr "可尋找四個月內，最多90天的活動"
+
+#: app/templates/events.html:40
 msgid "Loading more events..."
 msgstr "讀取更多活動中..."
 
-#: app/templates/events.html:43
+#: app/templates/events.html:77
 msgid "View Details"
 msgstr "看更多"
 
@@ -188,6 +239,42 @@ msgstr "發送密碼重置信"
 #: app/templates/forgot_password.html:13
 msgid "Back to Login"
 msgstr "回到登入"
+
+#: app/templates/form_builder.html:3 app/templates/new_event_with_form.html:13
+msgid "Define Registration Form"
+msgstr "製作報名表單"
+
+#: app/templates/form_builder.html:26 app/templates/new_event_with_form.html:62
+msgid "Short"
+msgstr "短問題"
+
+#: app/templates/form_builder.html:27 app/templates/new_event_with_form.html:63
+msgid "Yes/No"
+msgstr "是/否問題"
+
+#: app/templates/form_builder.html:28 app/templates/new_event_with_form.html:64
+msgid "Long"
+msgstr "長問題"
+
+#: app/templates/form_builder.html:42 app/templates/new_event_with_form.html:51
+msgid "Add Short"
+msgstr "增加短問題"
+
+#: app/templates/form_builder.html:48 app/templates/new_event_with_form.html:52
+msgid "Add Yes/No"
+msgstr "增加是否問題"
+
+#: app/templates/form_builder.html:54 app/templates/new_event_with_form.html:53
+msgid "Add Long"
+msgstr "增加長問題"
+
+#: app/templates/form_builder.html:58
+msgid "Save Template & Finish"
+msgstr "完成與儲存報名表單"
+
+#: app/templates/form_builder.html:77
+msgid "Your Question"
+msgstr "你的問題"
 
 #: app/templates/layout.html:7
 msgid "Activity MVP"
@@ -218,6 +305,7 @@ msgid "My Registration Events"
 msgstr "我登記的活動"
 
 #: app/templates/layout.html:39 app/templates/new_event.html:50
+#: app/templates/new_event_with_form.html:13
 msgid "Create Event"
 msgstr "舉辦活動"
 
@@ -233,11 +321,6 @@ msgstr "登出"
 #: app/templates/login.html:17
 msgid "Login"
 msgstr "登入"
-
-#: app/templates/layout.html:44 app/templates/register.html:3
-#: app/templates/register.html:17
-msgid "Register"
-msgstr "註冊"
 
 #: app/templates/layout.html:50
 msgid "繁體中文"
@@ -298,6 +381,62 @@ msgstr "說明"
 #: app/templates/new_event.html:20
 msgid "new_event_date"
 msgstr "日期"
+
+#: app/templates/new_event_with_form.html:9
+msgid "Step 1: Event Info"
+msgstr "步驟 1: 活動資訊"
+
+#: app/templates/new_event_with_form.html:10
+msgid "Step 2: Form Fields"
+msgstr "步驟 2: 報名表單"
+
+#: app/templates/new_event_with_form.html:19
+msgid "Event Title"
+msgstr "活動標題"
+
+#: app/templates/new_event_with_form.html:20
+msgid "Title is required."
+msgstr "標題為必填欄位"
+
+#: app/templates/new_event_with_form.html:25
+msgid "Description is required."
+msgstr "說明為必填欄位"
+
+#: app/templates/new_event_with_form.html:30
+msgid "Date & Time is required."
+msgstr "日期與時間為必填欄位"
+
+#: app/templates/new_event_with_form.html:43
+msgid "Next: Form Fields"
+msgstr "下一步: 報名表單製作"
+
+#: app/templates/new_event_with_form.html:73
+msgid "Saving..."
+msgstr "儲存中..."
+
+#: app/templates/new_event_with_form.html:73
+msgid "Create & Finish"
+msgstr "完成建立"
+
+#: app/templates/new_event_with_form.html:75
+msgid "Back"
+msgstr "回上一頁"
+
+#: app/templates/new_event_with_form.html:92
+msgid "Please Enter Your Question"
+msgstr "請確認您的報名表單"
+
+#: app/templates/new_event_with_form.html:112
+msgid "Every label must have at least one character."
+msgstr "所有的問題至少需要輸入一個字"
+
+#: app/templates/new_event_with_form.html:123
+msgid "Save failed."
+msgstr "儲存失敗"
+
+#: app/templates/register_event.html:3
+msgid "Register for"
+msgstr "報名"
 
 #: app/templates/mail/reset_password.html:3 app/templates/reset_password.html:3
 msgid "Reset Your Password"
@@ -413,4 +552,10 @@ msgstr "要是您沒有要求重置密碼，請忽略此信"
 
 #~ msgid "Submit"
 #~ msgstr "提交"
+
+#~ msgid "Event created successfully"
+#~ msgstr "活動創建成功"
+
+#~ msgid "View Details"
+#~ msgstr "看更多"
 

@@ -330,6 +330,8 @@ def tag_search():
 
 @main.route('/api/events')
 def api_events():
+    start = request.args.get('start')  # '2025-05-01'
+    end = request.args.get('end')  # '2025-05-14'
     q        = request.args.get('q','').strip()
     tags     = [tid for tid in request.args.getlist('tags') if tid]
     locale   = get_locale()
@@ -347,6 +349,8 @@ def api_events():
             "keywords": q,
             "locale":   locale,
             "tag_ids":  tags,
+            "p_start": start,
+            "p_end": end,
             "p_limit":  p_limit,
             "p_offset": p_offset
         }).execute().data or []

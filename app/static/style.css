@@ -362,3 +362,23 @@ Responsive adjustments
 .builder-item{flex-direction:column;align-items:stretch}
 .builder-item select{width:100%;flex:none}
 }
+
+/*!* 搜尋列統一 row 佈局 *!*/
+/*.search-row   { display:flex; gap:.5rem; flex-wrap:wrap; margin:.4rem 0; }*/
+/*.adv-row      { align-items:center; }*/
+
+/*.chip {      !* Advanced 切換 *!*/
+/*  background:#CDE8E5; color:#4D869C; border:none;*/
+/*  padding:.3rem .8rem; border-radius:18px; cursor:pointer;*/
+/*}*/
+/*.chip.active { background:#7AB2B2; color:#fff; }*/
+
+/*.icon-btn {  !* 清空日期 X 按鈕 *!*/
+/*  background:transparent; border:none; font-size:1.2rem; cursor:pointer;*/
+/*  color:#4D869C;*/
+/*}*/
+
+/*.adv-box { display:flex; gap:.4rem; align-items:center; }*/
+
+/*.muted   { color:#666; text-align:center; margin-top:1rem; }*/
+/*.loading { text-align:center; margin:1rem; }*/
