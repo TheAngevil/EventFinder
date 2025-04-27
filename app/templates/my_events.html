@@ -14,7 +14,7 @@
 
 {% if current_user.is_authenticated %}
   <p>
-    <a class="btn" href="{{ url_for('main.create_event') }}">
+    <a class="btn" href="{{ url_for('main.create_event_with_form') }}">
       {{ _('Create New Event') }}
     </a>
   </p>

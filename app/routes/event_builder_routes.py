@@ -8,21 +8,28 @@ from app import csrf
 @login_required
 def form_builder(id):
     supabase = get_supabase()
+    fields = request.get_json(force=True).get('fields', [])
 
-    # 取回已存的欄位（若沒有給 []）
-    row = (
-        supabase.table("event_forms")
-                .select("fields")
-                .eq("event_id", str(id))
-                .single()
-                .execute().data
-    )
-    fields = row["fields"] if row else []
+    # ① 刪除舊欄位
+    supabase.table("event_form_fields").delete().eq("event_id", str(id)).execute()
 
-    return render_template(
-        'form_builder.html',
-        fields_json=fields     # ← 傳到模板
-    )
+    # ② 依順序插入新欄位
+    rows = [{
+        "event_id" : str(id),
+        "order_idx": idx,
+        "kind"     : f["kind"],
+        "label"    : f["label"][:30]          # enforce 30 chars
+    } for idx, f in enumerate(fields)]
+    if rows:
+        supabase.table("event_form_fields").insert(rows).execute()
+
+    # ③ 若該活動首次產生表單，保證 event_forms 有一行鎖定
+    supabase.table("event_forms").upsert({
+        "event_id": str(id),
+        "is_locked": True
+    }).execute()
+
+    return {"ok": True}
 
 
 @main.route('/events/<id>/builder/save', methods=['POST'])

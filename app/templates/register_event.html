@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ _('Register for') }}: {{ event.title }}</h2>
+
+<form method="POST" class="container" style="max-width:600px;">
+  {{ form.hidden_tag() }}
+
+  <p>
+    {{ form.email.label }}<br>
+    {{ form.email(class_='form-input') }}
+  </p>
+
+  {# ── 依 fields 動態產生欄位 ── #}
+  {% for f in fields %}
+  {% set key = 'field_' ~ f.id %}
+  <p>
+    {{ form[key].label }}<br>
+    {% if f.kind == 'boolean' %}
+      {{ form[key]() }}
+    {% else %}
+      {{ form[key](class_='form-input') }}
+    {% endif %}
+  </p>
+{% endfor %}
+
+  {{ form.submit(class_='btn btn-primary') }}
+</form>
+{% endblock %}

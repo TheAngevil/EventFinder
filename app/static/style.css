@@ -274,9 +274,91 @@ button:hover,input[type="submit"]:hover{
 /* 讓 form buttons 一排顯示並留間距 */
 .form-buttons { display:flex; gap:1rem; }
 
-/* ----------- Form Builder 專用 ----------- */
-.builder-list      { list-style:none; padding:0; margin:1rem 0;}
-.builder-item      { display:flex; gap:.5rem; align-items:center; margin:.6rem 0;}
-.drag-handle       { cursor:grab; }
-.builder-item input{ flex:1; padding:.3rem; border:1px solid #ccc; border-radius:6px; }
-.builder-actions button{ margin-right:.5rem; }
+ /* --------------------------------------------------
+Builder (registration-form designer)
+--------------------------------------------------*/
+.builder-list   { list-style:none; padding:0; margin:1rem 0; }
+
+/* 單一欄位：拖曳把 5% | Label 70% | Select 15% | 刪除鍵 10% */
+.builder-item   {
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  margin:.6rem 0;
+  flex-wrap:nowrap;          /* 防止跨行 */
+}
+
+/* 1) 拖曳把 (dot) */
+.drag-handle    {
+  flex:0 0 5%;
+  cursor:grab;
+  font-size:1.1rem;
+  line-height:1;
+  color:#4D869C;
+}
+
+/* 2) Label 輸入框 */
+.builder-item input{
+  flex:0 0 70%;
+  padding:.4rem;
+  border:1px solid #ccc;
+  border-radius:6px;
+  min-width:250px;               /* 允許壓縮 */
+}
+
+/* 3) 欄位型別選單 */
+.builder-item select{
+  flex:0 0 15%;
+  min-width:80px;           /* 保底寬度 */
+  padding:.4rem;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+/* 4) 刪除按鈕 */
+.builder-item button{
+  flex:0 0 8%;
+  background:#7AB2B2;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  padding:.45rem 0;
+  cursor:pointer;
+}
+.builder-item button:hover{ background:#4D869C; }
+
+/* Builder 下方「Add」按鈕列 */
+.builder-actions{
+  margin:1rem 0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75rem;
+}
+
+/* 手機版：欄位垂直排列 */
+@media(max-width:600px){
+  .builder-item{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .drag-handle{align-self:flex-start;}
+  .builder-item input,
+  .builder-item select,
+  .builder-item button{flex:none; width:100%;}
+}
+
+/* --------------------------------------------------
+Stepper (wizard progress)
+--------------------------------------------------*/
+.stepper{display:flex;gap:1rem;margin-bottom:1.5rem;font-weight:bold}
+.stepper div{opacity:.4}
+.stepper .active{opacity:1;color:#4D869C}
+
+/* --------------------------------------------------
+Responsive adjustments
+--------------------------------------------------*/
+@media(max-width:600px){
+.form-buttons{flex-direction:column}
+.builder-item{flex-direction:column;align-items:stretch}
+.builder-item select{width:100%;flex:none}
+}

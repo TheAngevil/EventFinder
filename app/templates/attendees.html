@@ -1,39 +1,50 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h2>{{ _('Attendees for "%(title)s"', title=event.title) }}</h2>
+<h2>{{ _('Attendees for "%(t)s"', t=event.title) }}</h2>
 
-  <br method="POST" action="{{ url_for('main.update_checkin', event_id=event.id) }}">
-    <table border="1" cellpadding="6">
-      <thead>
-        <tr>
-          <th>{{ _('Email') }}</th>
-          <th>{{ _('Registered At') }}</th>
-          <th>{{ _('Checked In') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for attendee in attendees %}
-          <tr>
-            <td>{{ attendee.email }}</td>
-            <td>{{ attendee.timestamp }}</td>
-            <td>
-              <input
-                type="checkbox"
-                name="checkin_{{ attendee.user_id }}"
-                {% if attendee.is_checked_in %}checked{% endif %}
-              >
-            </td>
-          </tr>
+<form method="POST">
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr>
+        <th>{{ _('Email') }}</th>
+        <th>{{ _('Registered At') }}</th>
+        {% for label in fields %}
+          <th>{{ label }}</th>
         {% endfor %}
-      </tbody>
-    </table>
-    <br>
-    <button type="submit">{{ _('Save Check-in Status') }}</button>
-  </form>
+        <th>{{ _('Checked In') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for at in attendees %}
+        <tr>
+          <td>{{ at.email }}</td>
+          <td>{{ at.submitted_at[:-9] }}</td>
+          {% for a in at.answers %}
+            <td>{{ a.value }}</td>
+          {% endfor %}
+          <td>
+            {% if editable %}
+              <input type="checkbox"
+                     name="checkin_{{ at.user_id }}"
+                     {% if at.is_checked_in %}checked{% endif %}>
+            {% else %}
+              {{ _('Yes') if at.is_checked_in else _('No') }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-  <p>
-    <a href="{{ url_for('main.my_events') }}">
-      {{ _('Back to My Events') }}
-    </a>
-  </p>
+  {% if editable %}
+    <div style="margin-top:1rem">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn-primary">{{ _('Save Check-in Status') }}</button>
+    </div>
+  {% endif %}
+</form>
+
+<p style="margin-top:1rem">
+  <a class="btn-secondary" href="{{ url_for('main.my_events') }}">{{ _('Back to My Events') }}</a>
+</p>
 {% endblock %}

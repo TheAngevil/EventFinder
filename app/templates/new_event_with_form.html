@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+{% block content %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<div x-data="wizard()" class="container" style="max-width:800px; margin:2rem auto">
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div :class="{'active': step===1}">{{ _('Step 1: Event Info') }}</div>
+    <div :class="{'active': step===2}">{{ _('Step 2: Form Fields') }}</div>
+  </div>
+
+  <h2 x-text="step===1 ? '{{ _('Create Event') }}' : '{{ _('Define Registration Form') }}'"></h2>
+
+  <!-- Step 1 -->
+  <div x-show="step===1">
+    <p>
+      <label>{{ _('Title') }} *</label><br>
+      <input x-model="event.title" @blur="touched.title=true" class="form-input" placeholder="{{ _('Event Title') }}" required minlength="1">
+      <span class="error" x-show="!event.title && touched.title">{{ _('Title is required.') }}</span>
+    </p>
+    <p>
+      <label>{{ _('Description') }} *</label><br>
+      <textarea x-model="event.description" @blur="touched.description=true" class="form-textarea" rows="3" required minlength="1"></textarea>
+      <span class="error" x-show="!event.description && touched.description">{{ _('Description is required.') }}</span>
+    </p>
+    <p>
+      <label>{{ _('Date & Time') }} *</label><br>
+      <input type="datetime-local" x-model="event.date" @blur="touched.date=true" class="form-input">
+      <span class="error" x-show="!event.date && touched.date">{{ _('Date & Time is required.') }}</span>
+    </p>
+
+    <div class="toggle-switch">
+      <input type="checkbox" id="is_public" x-model="event.is_public">
+      <label for="is_public" class="toggle-label"></label>
+      <span class="toggle-text"
+            x-text="event.is_public ? '{{ _('Public Event') }}' : '{{ _('Private Event') }}'">
+      </span>
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn-primary" :disabled="!isStep1Valid" @click.prevent="validateStep1()">
+        {{ _('Next: Form Fields') }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div x-show="step===2">
+    <div class="builder-actions">
+      <button type="button" @click="add('short')"   :disabled="count('short')>=10">{{ _('Add Short') }}</button>
+      <button type="button" @click="add('boolean')" :disabled="count('boolean')>=10">{{ _('Add Yes/No') }}</button>
+      <button type="button" @click="add('long')"    :disabled="count('long')>=2">{{ _('Add Long') }}</button>
+    </div>
+
+    <ul id="fieldList" class="builder-list">
+      <template x-for="(f,idx) in fields" :key="f.id">
+        <li class="builder-item">
+{#          <span class="drag-handle">☰</span>#}
+          <input x-model="f.label" maxlength="300" :placeholder="i18n.label" class="form-input" required minlength="1">
+          <select x-model="f.kind" class="form-input">
+            <option value="short">{{ _('Short') }}</option>
+            <option value="boolean">{{ _('Yes/No') }}</option>
+            <option value="long">{{ _('Long') }}</option>
+          </select>
+          <button type="button" @click="remove(idx)">✕</button>
+        </li>
+      </template>
+    </ul>
+
+    <div class="form-buttons">
+      <button class="btn-primary" :disabled="saving || !fields.length" @click.prevent="save()">
+        <span x-text="saving ? '{{ _('Saving...') }}' : '{{ _('Create & Finish') }}'"></span>
+      </button>
+      <button class="btn-secondary" @click.prevent="step=1">{{ _('Back') }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- scripts -->
+{#<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>#}
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<script>
+function uid(){ return crypto.randomUUID?.() || (Date.now()+Math.random()).toString(36); }
+
+function wizard(){
+  return {
+    step:1, saving:false,
+    touched:{title:false,description:false,date:false},
+    event:{ title:'', description:'', date:new Date().toISOString().slice(0,16), is_public:true },
+    fields:[], i18n:{ label:"{{ _('Please Enter Your Question') }}" },
+
+    get isStep1Valid(){ return this.event.title && this.event.description && this.event.date; },
+    validateStep1(){
+      this.touched.title=this.touched.description=this.touched.date=true;
+      if(this.isStep1Valid){ this.step=2}
+      {#if(this.isStep1Valid){ this.step=2; this.initDrag(); }#}
+    },
+
+    add(k){ this.fields.push({id:uid(),label:'',kind:k}); },
+    remove(i){ this.fields.splice(i,1); },
+    count(k){ return this.fields.filter(f=>f.kind===k).length; },
+
+    save(){
+      // 1) 至少 1 個欄位
+      {#if(!this.fields.length){ alert("{{ _('Please add at least one field.') }}"); return; }#}
+
+      // 2) 每個欄位 Label 不能為空
+      const blank = this.fields.find(f => !f.label.trim());
+      if (blank){
+        alert("{{ _('Every label must have at least one character.') }}");
+        return;
+      }
+      this.saving=true;
+      fetch(location.pathname,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-CSRFToken':document.querySelector('meta[name=\"csrf-token\"]').content},
+        body:JSON.stringify({event:this.event,fields:this.fields.map(f=>({label:f.label,kind:f.kind}))})
+      })
+      .then(r=>r.ok?r.json():r.json().then(e=>Promise.reject(e)))
+      .then(d=>window.location.href='/events/'+d.id)
+      .catch(e=>alert(e.error||'{{ _('Save failed.') }}'))
+      .finally(()=>this.saving=false);
+    },
+
+    {#initDrag(){#}
+    {#  new Sortable(document.getElementById('fieldList'),{#}
+    {#    animation:150, handle:'.drag-handle',#}
+    {#    onEnd:e=>{const m=this.fields.splice(e.oldIndex,1)[0]; let at=e.newIndex; if(e.newIndex>e.oldIndex)at--; this.fields.splice(at,0,m);}#}
+    {#  });}#}
+  };
+}
+</script>
+{% endblock %}

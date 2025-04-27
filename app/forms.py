@@ -46,8 +46,27 @@ class EventForm(FlaskForm):
         if len(field.data) > 5:
             raise ValidationError("最多可選 5 個標籤。")
 
+
 class RegisterEventForm(FlaskForm):
-    submit = SubmitField('Register')
+    @staticmethod
+    def build_dynamic_form(field_rows):
+        """依舉辦者定義動態產生 WTForms"""
+        attrs = {
+            'email': StringField('Email', render_kw={'readonly': True})
+        }
+        for f in field_rows:
+            name = f"field_{f['id']}"  # 使用 DB field_id 組成唯一欄位名
+            if f['kind'] == 'short':
+                attrs[name] = StringField(
+                    f['label'], validators=[DataRequired(), Length(max=30)])
+            elif f['kind'] == 'long':
+                attrs[name] = TextAreaField(
+                    f['label'], validators=[DataRequired(), Length(max=500)])
+            elif f['kind'] == 'boolean':
+                attrs[name] = BooleanField(f['label'])
+        attrs['submit'] = SubmitField('Submit')
+        return type('DynamicForm', (FlaskForm,), attrs)
+
 
 class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
