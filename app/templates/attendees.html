@@ -2,6 +2,18 @@
 {% block content %}
 <h2>{{ _('Attendees for "%(t)s"', t=event.title) }}</h2>
 
+
+{# ── 報名統計 ──────────────────────────── #}
+{% set total     = attendees|length %}
+{% set confirmed = attendees
+                   |selectattr('is_checked_in', 'equalto', true)
+                   |list
+                   |length %}
+<div style="text-align:right; font-weight:bold; margin-bottom:0.3rem;">
+  {{ _('Registered') }}: {{ total }} &nbsp;|&nbsp;
+  {{ _('Checked-in') }}: {{ confirmed }}
+</div>
+
 <form method="POST">
   <table border="1" cellpadding="6">
     <thead>
@@ -18,7 +30,11 @@
       {% for at in attendees %}
         <tr>
           <td>{{ at.email }}</td>
-          <td>{{ at.submitted_at[:-9] }}</td>
+          <td>
+            <span class="ts" data-iso="{{ at.submitted_at }}">
+                {{ at.submitted_at }}
+            </span>
+          </td>
           {% for a in at.answers %}
             <td>{{ a.value }}</td>
           {% endfor %}
@@ -36,6 +52,21 @@
     </tbody>
   </table>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const opts = { year:'numeric', month:'2-digit', day:'2-digit',
+                 hour:'2-digit', minute:'2-digit' };
+  document.querySelectorAll('.ts').forEach(span => {
+    const iso  = span.dataset.iso;
+    console.log(iso)
+    if(!iso) return;
+    const dt   = new Date(iso);      // 直接用瀏覽器時區
+      console.log(dt)
+    span.textContent = dt.toLocaleString(undefined, opts);
+  });
+});
+</script>
+
   {% if editable %}
     <div style="margin-top:1rem">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -48,3 +79,6 @@
   <a class="btn-secondary" href="{{ url_for('main.my_events') }}">{{ _('Back to My Events') }}</a>
 </p>
 {% endblock %}
+
+
+
