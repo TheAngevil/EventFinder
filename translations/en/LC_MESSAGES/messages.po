@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-27 13:17+0800\n"
+"POT-Creation-Date: 2025-04-27 13:27+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -191,10 +191,9 @@ msgstr "This is a private event."
 msgid "Share this link:"
 msgstr "Share this link:"
 
-#: app/templates/event_detail.html:42 app/templates/layout.html:44
-#: app/templates/register.html:3 app/templates/register.html:17
-msgid "Register"
-msgstr "Register"
+#: app/templates/event_detail.html:42
+msgid "Sign-UP"
+msgstr "Sign Up"
 
 #: app/templates/events.html:8
 msgid "Upcoming Events"
@@ -321,6 +320,11 @@ msgstr "Logout"
 #: app/templates/login.html:17
 msgid "Login"
 msgstr "Login"
+
+#: app/templates/layout.html:44 app/templates/register.html:3
+#: app/templates/register.html:17
+msgid "Register"
+msgstr "Register"
 
 #: app/templates/layout.html:50
 msgid "繁體中文"

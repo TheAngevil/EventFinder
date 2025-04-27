@@ -39,7 +39,7 @@
   {% if can_register %}
       <a class="btn"
          href="{{ url_for('main.event_register', id=event.id, token=request.args.get('token')) }}">
-         {{ _('Register') }}
+         {{ _('Sign-UP') }}
       </a>
   {% endif %}
 

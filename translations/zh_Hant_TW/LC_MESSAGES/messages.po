@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-27 13:17+0800\n"
+"POT-Creation-Date: 2025-04-27 13:27+0800\n"
 "PO-Revision-Date: 2025-04-17 15:32+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant_TW\n"
@@ -191,10 +191,9 @@ msgstr "這是非公開活動"
 msgid "Share this link:"
 msgstr "分享這個連接"
 
-#: app/templates/event_detail.html:42 app/templates/layout.html:44
-#: app/templates/register.html:3 app/templates/register.html:17
-msgid "Register"
-msgstr "註冊"
+#: app/templates/event_detail.html:42
+msgid "Sign-UP"
+msgstr "報名"
 
 #: app/templates/events.html:8
 msgid "Upcoming Events"
@@ -321,6 +320,11 @@ msgstr "登出"
 #: app/templates/login.html:17
 msgid "Login"
 msgstr "登入"
+
+#: app/templates/layout.html:44 app/templates/register.html:3
+#: app/templates/register.html:17
+msgid "Register"
+msgstr "註冊"
 
 #: app/templates/layout.html:50
 msgid "繁體中文"
